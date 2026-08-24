@@ -1,9 +1,11 @@
-/* GrabAll Stylesheet */
+/* Asset Extractors - Light Blue & White Theme */
 :root {
-  --primary-red: #ea2b2b;
-  --primary-hover: #d02020;
-  --accent-purple: #6366f1;
-  --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --primary-blue: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-light: #f0f9ff;
+  --primary-border: #bae6fd;
+  --accent-cyan: #38bdf8;
+  --accent-gradient: linear-gradient(135deg, #38bdf8, #0284c7);
   --bg-main: #ffffff;
   --bg-subtle: #f8fafc;
   --bg-card: #ffffff;
@@ -15,9 +17,9 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+  --shadow-sm: 0 1px 3px rgba(2, 132, 199, 0.06);
+  --shadow-md: 0 4px 14px rgba(2, 132, 199, 0.12);
+  --shadow-lg: 0 10px 25px -5px rgba(2, 132, 199, 0.15);
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -51,7 +53,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 11px 16px;
   border-bottom: 1px solid var(--border-light);
   background: #ffffff;
   z-index: 10;
@@ -60,9 +62,11 @@ body {
 .brand-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
+  cursor: pointer;
 }
 
+/* Light Blue Isometric Logo */
 .logo-icon {
   position: relative;
   width: 26px;
@@ -80,20 +84,20 @@ body {
 
 .card-back {
   left: 0;
-  background-color: #1e293b;
-  opacity: 0.9;
+  background: #0369a1;
+  opacity: 0.85;
 }
 
 .card-mid {
   left: 5px;
-  background-color: #475569;
+  background: #38bdf8;
   opacity: 0.95;
 }
 
 .card-front {
   left: 10px;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+  background: linear-gradient(135deg, #7dd3fc, #0284c7);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
 }
 
 .brand-text-block {
@@ -111,58 +115,114 @@ body {
 }
 
 .brand-title span {
-  color: var(--primary-red);
+  color: var(--primary-blue);
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.dev-tag {
+/* Developed by Srijith + Contact Animated Row */
+.dev-author-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.animated-dev-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: 0.65rem;
   color: #64748b;
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.15s ease;
-  width: fit-content;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  padding: 1px 4px;
+  border-radius: 4px;
 }
 
-.dev-tag strong {
-  color: #0f172a;
+.spark-dot {
+  width: 5px;
+  height: 5px;
+  background: #0284c7;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseDot 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4); }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 6px 2px rgba(2, 132, 199, 0.6); }
+}
+
+.shimmer-dev-name {
+  background: linear-gradient(90deg, #0f172a 0%, #0284c7 50%, #38bdf8 75%, #0f172a 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerName 3s linear infinite;
+  font-weight: 800;
+}
+
+@keyframes shimmerName {
+  to { background-position: 200% center; }
+}
+
+.btn-dev-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  font-size: 0.625rem;
   font-weight: 700;
+  color: #0284c7;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(2, 132, 199, 0.08);
 }
 
-.dev-tag:hover {
-  color: var(--primary-red);
-}
-
-.dev-tag:hover strong {
-  color: var(--primary-red);
+.btn-dev-contact:hover {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: #ffffff;
+  border-color: #0284c7;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .btn-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 31px;
+  height: 31px;
   border-radius: var(--radius-sm);
-  background: #f1f5f9;
+  background: #f8fafc;
   border: 1px solid var(--border-light);
   color: #475569;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
+.btn-icon:hover {
+  background: #f0f9ff;
+  border-color: var(--primary-border);
+  color: var(--primary-blue);
+}
+
 .btn-icon.active {
-  background: var(--primary-red);
+  background: var(--primary-blue);
   color: #ffffff;
-  border-color: var(--primary-red);
+  border-color: var(--primary-blue);
+  box-shadow: 0 2px 5px rgba(2, 132, 199, 0.3);
 }
 
 /* Screen Capture Drawer */
@@ -495,7 +555,7 @@ body {
 .progress-fill {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #4f46e5, #7c3aed, #a855f7);
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9, #0284c7);
   border-radius: 999px;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -533,8 +593,8 @@ body {
   align-items: center;
   gap: 5px;
   padding: 5px 11px;
-  background: #f1f5f9;
-  border: 1px solid transparent;
+  background: #f8fafc;
+  border: 1px solid var(--border-light);
   border-radius: 20px;
   font-size: 0.775rem;
   font-weight: 600;
@@ -545,13 +605,16 @@ body {
 }
 
 .cat-pill:hover {
-  background: #e2e8f0;
-  color: #1e293b;
+  background: #f0f9ff;
+  border-color: var(--primary-border);
+  color: var(--primary-blue);
 }
 
 .cat-pill.active {
-  background: #0f172a;
+  background: var(--primary-blue);
+  border-color: var(--primary-blue);
   color: #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
 }
 
 .cat-count {
@@ -738,8 +801,8 @@ body {
 }
 
 .asset-card.selected {
-  border-color: var(--primary-red);
-  box-shadow: 0 0 0 2px rgba(234, 43, 43, 0.2);
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.3);
 }
 
 .card-thumb-wrap {
@@ -781,9 +844,9 @@ body {
 .card-checkbox {
   width: 17px;
   height: 17px;
-  accent-color: var(--primary-red);
+  accent-color: var(--primary-blue);
   cursor: pointer;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
 }
 
 /* Badges */
@@ -844,7 +907,7 @@ body {
 
 .btn-card-action:hover {
   transform: scale(1.15);
-  background-color: var(--primary-red);
+  background-color: var(--primary-blue);
   color: #ffffff;
 }
 
@@ -1040,18 +1103,18 @@ body {
   font-size: 0.825rem;
   font-weight: 700;
   color: #ffffff;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
   border: none;
   border-radius: var(--radius-sm);
-  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .btn-primary-download:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  background: linear-gradient(135deg, #0284c7, #0369a1);
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);
 }
 
 .btn-primary-download:disabled,

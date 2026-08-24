@@ -1,6 +1,7 @@
-/* GrabAll Studio Stylesheet */
+/* Asset Extractors Studio Stylesheet - Light Blue & White Theme */
 :root {
-  --primary-red: #ea2b2b;
+  --primary-blue: #0284c7;
+  --primary-hover: #0369a1;
   --bg-dark: #0f172a;
   --bg-card: #ffffff;
   --border: #e2e8f0;
@@ -62,9 +63,9 @@ body {
   transform: skewX(-14deg);
 }
 
-.card-back { left: 0; background: #1e293b; }
-.card-mid { left: 6px; background: #475569; }
-.card-front { left: 12px; background: #ea2b2b; }
+.card-back { left: 0; background: #0369a1; }
+.card-mid { left: 6px; background: #38bdf8; }
+.card-front { left: 12px; background: linear-gradient(135deg, #7dd3fc, #0284c7); }
 
 .brand-info {
   display: flex;
@@ -84,7 +85,7 @@ body {
 }
 
 .brand-info h2 span {
-  color: var(--primary-red);
+  color: var(--primary-blue);
 }
 
 .dev-tag-studio {
@@ -92,22 +93,27 @@ body {
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  background: #f1f5f9;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
   border-radius: 12px;
   font-size: 0.7rem;
-  color: #64748b;
+  color: #0284c7;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.15s ease;
 }
 
 .dev-tag-studio strong {
-  color: #0f172a;
+  color: #0369a1;
 }
 
 .dev-tag-studio:hover {
-  background: #fee2e2;
-  color: var(--primary-red);
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.dev-tag-studio:hover strong {
+  color: #ffffff;
 }
 
 .dev-tag-studio:hover strong {

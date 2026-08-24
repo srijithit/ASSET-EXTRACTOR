@@ -57,7 +57,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const settingsModal = document.getElementById('settingsModal');
   const settingAutoWebp = document.getElementById('settingAutoWebp');
   const settingWebpQuality = document.getElementById('settingWebpQuality');
+  const settingSubfolders = document.getElementById('settingSubfolders');
   const settingRenderUrl = document.getElementById('settingRenderUrl');
+  const settingDefaultFormat = document.getElementById('settingDefaultFormat');
+  const btnSaveSettingsModal = document.getElementById('btnSaveSettingsModal');
+
+  const DEFAULT_SETTINGS = {
+    autoWebp: true,
+    webpQuality: '0.95',
+    subfolders: true,
+    renderBackendUrl: 'https://asset-extractor-4561.onrender.com/',
+    defaultFormat: 'rar'
+  };
 
   // Screen Capture Options
   const btnCaptureToggle = document.getElementById('btnCaptureToggle');
@@ -342,24 +353,65 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
 
-    // Settings Modal
-    chrome.storage.local.get(['renderBackendUrl'], (res) => {
-      if (res.renderBackendUrl && settingRenderUrl) {
-        settingRenderUrl.value = res.renderBackendUrl;
-      }
-    });
+    // Load Saved Settings with Desired Defaults
+    chrome.storage.local.get(
+      ['autoWebp', 'webpQuality', 'subfolders', 'renderBackendUrl', 'defaultFormat'],
+      (res) => {
+        const autoWebp = res.autoWebp !== undefined ? res.autoWebp : DEFAULT_SETTINGS.autoWebp;
+        const webpQuality = res.webpQuality || DEFAULT_SETTINGS.webpQuality;
+        const subfolders = res.subfolders !== undefined ? res.subfolders : DEFAULT_SETTINGS.subfolders;
+        const renderUrl = res.renderBackendUrl || DEFAULT_SETTINGS.renderBackendUrl;
+        const defaultFormat = res.defaultFormat || DEFAULT_SETTINGS.defaultFormat;
 
-    if (settingRenderUrl) {
-      settingRenderUrl.addEventListener('change', () => {
-        let val = settingRenderUrl.value.trim();
-        if (val && !val.startsWith('http://') && !val.startsWith('https://')) {
-          val = 'https://' + val;
-          settingRenderUrl.value = val;
+        if (settingAutoWebp) settingAutoWebp.checked = autoWebp;
+        if (chkConvertToWebp) chkConvertToWebp.checked = autoWebp;
+        if (settingWebpQuality) settingWebpQuality.value = webpQuality;
+        if (settingSubfolders) settingSubfolders.checked = subfolders;
+        if (settingRenderUrl) settingRenderUrl.value = renderUrl;
+        if (settingDefaultFormat) settingDefaultFormat.value = defaultFormat;
+        if (archiveFormatSelect) {
+          archiveFormatSelect.value = defaultFormat;
+          downloadArchiveBtnText.textContent = `Download .${defaultFormat.toUpperCase()}`;
         }
-        chrome.storage.local.set({ renderBackendUrl: val });
-        showToast('Render cloud backend saved!');
+      }
+    );
+
+    function persistAllSettings() {
+      const autoWebp = settingAutoWebp ? settingAutoWebp.checked : true;
+      const webpQuality = settingWebpQuality ? settingWebpQuality.value : '0.95';
+      const subfolders = settingSubfolders ? settingSubfolders.checked : true;
+      let renderUrl = settingRenderUrl ? settingRenderUrl.value.trim() : DEFAULT_SETTINGS.renderBackendUrl;
+      if (renderUrl && !renderUrl.startsWith('http://') && !renderUrl.startsWith('https://')) {
+        renderUrl = 'https://' + renderUrl;
+        if (settingRenderUrl) settingRenderUrl.value = renderUrl;
+      }
+      const defaultFormat = settingDefaultFormat ? settingDefaultFormat.value : 'rar';
+
+      chrome.storage.local.set({
+        autoWebp,
+        webpQuality,
+        subfolders,
+        renderBackendUrl: renderUrl,
+        defaultFormat
+      }, () => {
+        if (chkConvertToWebp) chkConvertToWebp.checked = autoWebp;
+        if (archiveFormatSelect) {
+          archiveFormatSelect.value = defaultFormat;
+          downloadArchiveBtnText.textContent = `Download .${defaultFormat.toUpperCase()}`;
+        }
+        showToast('Settings saved as default!');
       });
     }
+
+    settingAutoWebp?.addEventListener('change', persistAllSettings);
+    settingWebpQuality?.addEventListener('change', persistAllSettings);
+    settingSubfolders?.addEventListener('change', persistAllSettings);
+    settingRenderUrl?.addEventListener('change', persistAllSettings);
+    settingDefaultFormat?.addEventListener('change', persistAllSettings);
+    btnSaveSettingsModal?.addEventListener('click', () => {
+      persistAllSettings();
+      settingsModal.classList.add('hidden');
+    });
 
     btnSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
     btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));

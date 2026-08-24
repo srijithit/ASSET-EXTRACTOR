@@ -18,14 +18,18 @@
         </div>
         <div class="brand-text-block">
           <h1 class="brand-title">Asset <span>Extractors</span></h1>
-          <a href="https://srijith.vercel.app/" target="_blank" rel="noopener noreferrer" class="dev-tag" title="Developer Portfolio">
-            <span>DEV by <strong>srijith</strong></span>
-            <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="2" fill="none">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </a>
+          <div class="dev-author-row">
+            <a href="https://srijith.vercel.app/" target="_blank" rel="noopener noreferrer" class="dev-tag animated-dev-badge" title="Visit Srijith's Portfolio">
+              <span class="spark-dot"></span>
+              <span>DEV by <strong class="shimmer-dev-name">srijith</strong></span>
+            </a>
+            <a href="https://srijith.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-dev-contact" title="Get in touch with Srijith">
+              <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Contact</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -366,14 +370,14 @@
           <div class="setting-item">
             <label class="setting-title">Auto-convert to WebP format</label>
             <span class="setting-desc">Convert PNG/JPG/SVG images into lightweight .WEBP</span>
-            <input type="checkbox" id="settingAutoWebp">
+            <input type="checkbox" id="settingAutoWebp" checked>
           </div>
           <div class="setting-item">
             <label class="setting-title">WebP Quality</label>
             <span class="setting-desc">Compression quality for WebP conversion</span>
             <select id="settingWebpQuality">
-              <option value="0.95">95% (Maximum Quality)</option>
-              <option value="0.85" selected>85% (Optimal Balance)</option>
+              <option value="0.95" selected>95% (Maximum Quality)</option>
+              <option value="0.85">85% (Optimal Balance)</option>
               <option value="0.75">75% (Smallest File Size)</option>
             </select>
           </div>
@@ -385,15 +389,19 @@
           <div class="setting-item">
             <label class="setting-title">Render Cloud Backend (Optional)</label>
             <span class="setting-desc">Connect to your hosted Render URL for server-side scraping & streaming ZIP</span>
-            <input type="text" id="settingRenderUrl" placeholder="https://asset-extractors.onrender.com" style="width:100%; padding:6px 10px; margin-top:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.75rem; color:#0f172a;">
+            <input type="text" id="settingRenderUrl" value="https://asset-extractor-4561.onrender.com/" placeholder="https://asset-extractor-4561.onrender.com/" style="width:100%; padding:6px 10px; margin-top:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.75rem; color:#0f172a;">
           </div>
           <div class="setting-item">
             <label class="setting-title">Default Archive Format</label>
             <span class="setting-desc">Preferred compression format for batch export</span>
             <select id="settingDefaultFormat">
+              <option value="rar" selected>RAR package (.rar)</option>
               <option value="zip">ZIP archive (.zip)</option>
-              <option value="rar">RAR package (.rar)</option>
+              <option value="tar">TAR archive (.tar)</option>
             </select>
+          </div>
+          <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+            <button class="btn-primary-download" id="btnSaveSettingsModal" style="padding:6px 14px; font-size:0.775rem;">💾 Save Defaults</button>
           </div>
         </div>
       </div>
