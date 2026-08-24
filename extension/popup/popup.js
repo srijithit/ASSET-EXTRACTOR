@@ -219,6 +219,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Link & Button Health Checker Drawer Toggle
     btnLinkCheckerToggle.addEventListener('click', () => {
+      captureDrawer?.classList.add('hidden');
+      btnCaptureToggle?.classList.remove('active');
       const isHidden = linkCheckerDrawer.classList.toggle('hidden');
       btnLinkCheckerToggle.classList.toggle('active', !isHidden);
       if (!isHidden && allPageLinks.length === 0) {
@@ -242,6 +244,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Screen Capture Options Drawer
     btnCaptureToggle.addEventListener('click', () => {
+      linkCheckerDrawer?.classList.add('hidden');
+      btnLinkCheckerToggle?.classList.remove('active');
       const isHidden = captureDrawer.classList.toggle('hidden');
       btnCaptureToggle.classList.toggle('active', !isHidden);
     });
