@@ -383,7 +383,54 @@ app.post('/api/download-zip', async (req, res) => {
   await archive.finalize();
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`🚀 Asset Extractors Web Server running on http://localhost:${PORT}`);
+/**
+ * GET /api/ping and /health
+ * Lightweight health check & keep-alive endpoint
+ */
+app.get(['/api/ping', '/health', '/ping'], (req, res) => {
+  res.status(200).json({
+    status: 'online',
+    service: 'Asset Extractors Web Service',
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    keepAlive: true
+  });
 });
+
+// Start Server
+const server = app.listen(PORT, () => {
+  console.log(`🚀 Asset Extractors Web Server running on http://localhost:${PORT}`);
+  startAutoKeepAlive();
+});
+
+/**
+ * Auto Keep-Alive Heartbeat (1-Minute Interval)
+ * Prevents Render free tier from sleeping by self-pinging
+ */
+function startAutoKeepAlive() {
+  const ONE_MINUTE = 60 * 1000;
+  
+  setInterval(async () => {
+    try {
+      // Render automatically sets RENDER_EXTERNAL_URL (e.g. https://asset-extractors.onrender.com)
+      const targetBase = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || `http://localhost:${PORT}`;
+      const pingUrl = `${targetBase.replace(/\/$/, '')}/api/ping`;
+      
+      const res = await axios.get(pingUrl, {
+        timeout: 8000,
+        headers: { 'User-Agent': 'AssetExtractors-KeepAlive-Bot/1.0' }
+      });
+      
+      if (res.status === 200) {
+        console.log(`⏱️ [Keep-Alive 1-Min Ping] Pinged ${pingUrl} - Status: OK (${new Date().toLocaleTimeString()})`);
+      }
+    } catch (err) {
+      // Internal heartbeat backup ping
+      try {
+        await axios.get(`http://127.0.0.1:${PORT}/api/ping`, { timeout: 4000 });
+      } catch (e) {}
+    }
+  }, ONE_MINUTE);
+
+  console.log(`🟢 Auto Keep-Alive Heartbeat initialized (running once every 1 minute)`);
+}
