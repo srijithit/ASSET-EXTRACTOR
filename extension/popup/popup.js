@@ -259,7 +259,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Deep Rescan
     btnRescan?.addEventListener('click', () => triggerDeepScan());
-    btnDeepScanEmpty?.addEventListener('click', () => triggerDeepScan());
 
     // Archive Format Select
     archiveFormatSelect.addEventListener('change', () => {
