@@ -198,201 +198,204 @@
       </div>
     </div>
 
-    <!-- Scan Progress Status -->
-    <div class="scan-status-container" id="scanStatusContainer">
-      <div class="scan-status-header">
-        <span class="scan-label" id="scanStatusText">Scanning page...</span>
-        <span class="scan-counter" id="scanCounter">0</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressBar"></div>
-      </div>
-    </div>
+    <!-- 1. Clean Empty Home Page Dashboard View (Default on launch) -->
+    <div class="home-dashboard-view" id="homeDashboardView">
+      <div class="home-empty-card">
+        <div class="home-logo-glow">
+          <img src="../icons/logo.png" class="home-sj-logo" alt="SJ Logo">
+        </div>
+        <h3 class="home-title">Asset Extractors</h3>
+        <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, or inspect unbroken link redirections.</p>
 
-    <!-- Filters & Categories -->
-    <nav class="category-nav" id="categoryNav">
-      <button class="cat-pill active" data-category="all">
-        All <span class="cat-count" id="countAll">0</span>
-      </button>
-      <button class="cat-pill" data-category="mobile">
-        📱 Mobile <span class="cat-count" id="countMobile">0</span>
-      </button>
-      <button class="cat-pill" data-category="image">
-        Images <span class="cat-count" id="countImages">0</span>
-      </button>
-      <button class="cat-pill" data-category="video">
-        Videos <span class="cat-count" id="countVideos">0</span>
-      </button>
-      <button class="cat-pill" data-category="logo">
-        Logos <span class="cat-count" id="countLogos">0</span>
-      </button>
-      <button class="cat-pill" data-category="svg">
-        SVGs <span class="cat-count" id="countSvgs">0</span>
-      </button>
-      <button class="cat-pill" data-category="background">
-        Backgrounds <span class="cat-count" id="countBgs">0</span>
-      </button>
-      <button class="cat-pill" id="catPillLinks" data-category="links" style="background:#f0fdf4; border-color:#86efac; color:#15803d; font-weight:700;">
-        🔗 Links & Buttons <span class="cat-count" id="countLinks">Check</span>
-      </button>
-    </nav>
+        <div class="home-action-grid">
+          <button class="home-action-btn primary" id="btnHomeScanNow">
+            <span class="home-btn-icon">🖼️</span>
+            <div class="home-btn-texts">
+              <strong>Extract Images & Media</strong>
+              <small>Click to scan and open gallery</small>
+            </div>
+          </button>
 
-    <!-- Toolbar Filters & Search -->
-    <div class="toolbar-controls">
-      <div class="search-input-wrap">
-        <svg class="search-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input type="text" id="searchInput" placeholder="Filter by name, dimensions, or ext...">
-        <button class="clear-search hidden" id="btnClearSearch">&times;</button>
-      </div>
+          <button class="home-action-btn" id="btnHomeCheckLinks">
+            <span class="home-btn-icon">🔗</span>
+            <div class="home-btn-texts">
+              <strong>Link & Button Health</strong>
+              <small>Check 200 OK & 301/404 redirects</small>
+            </div>
+          </button>
 
-      <div class="filter-dropdowns">
-        <select id="deviceFilter" class="select-dropdown" title="Filter by Device (Mobile / Desktop)">
-          <option value="all">All Devices</option>
-          <option value="mobile">📱 Mobile</option>
-          <option value="desktop">💻 Desktop</option>
-        </select>
+          <button class="home-action-btn" id="btnHomeOpenSim">
+            <span class="home-btn-icon">📱</span>
+            <div class="home-btn-texts">
+              <strong>Mobile Simulator</strong>
+              <small>iPhone & Android device frames</small>
+            </div>
+          </button>
 
-        <select id="sizeFilter" class="select-dropdown" title="Filter by resolution">
-          <option value="all">Any Size</option>
-          <option value="large">Large (> 800px)</option>
-          <option value="medium">Medium (200-800px)</option>
-          <option value="small">Small (< 200px)</option>
-        </select>
-
-        <select id="formatFilter" class="select-dropdown" title="Filter by file format">
-          <option value="all">All Formats</option>
-          <option value="jpg">JPG / JPEG</option>
-          <option value="png">PNG</option>
-          <option value="webp">WEBP</option>
-          <option value="svg">SVG</option>
-          <option value="mp4">MP4 / Video</option>
-          <option value="gif">GIF</option>
-        </select>
-
-        <button class="btn-toggle-view" id="btnToggleView" title="Toggle Grid / List View">
-          <svg id="viewGridIcon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-        </button>
+          <button class="home-action-btn" id="btnHomeCapture">
+            <span class="home-btn-icon">📸</span>
+            <div class="home-btn-texts">
+              <strong>Page & Screen Capture</strong>
+              <small>Crop area, full page stitch</small>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Quick Selection Row -->
-    <div class="selection-row">
-      <label class="select-all-label">
-        <input type="checkbox" id="selectAllCheckbox" checked>
-        <span class="custom-checkbox"></span>
-        <span class="select-all-text" id="selectionCountText">All Selected (0)</span>
-      </label>
-
-      <div class="selection-quick-links">
-        <button class="btn-link" id="btnInvertSelection">Invert</button>
-        <button class="btn-link" id="btnRescan">Deep Scan</button>
-      </div>
-    </div>
-
-    <!-- Assets Container (Grid/List) -->
-    <main class="assets-gallery" id="assetsGallery">
-      <!-- Loading Skeleton -->
-      <div class="skeleton-state" id="skeletonLoader">
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-      </div>
-
-      <!-- Empty Home Page Dashboard -->
-      <div class="empty-state hidden" id="emptyState">
-        <div class="home-empty-card">
-          <div class="home-logo-glow">
-            <img src="../icons/logo.png" class="home-sj-logo" alt="SJ Logo">
-          </div>
-          <h3 class="home-title">Asset Extractors</h3>
-          <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, or inspect unbroken link redirections.</p>
-
-          <div class="home-action-grid">
-            <button class="home-action-btn primary" id="btnHomeScanNow">
-              <span class="home-btn-icon">⚡</span>
-              <div class="home-btn-texts">
-                <strong>Scan Active Page</strong>
-                <small>Extract all images & media</small>
-              </div>
-            </button>
-
-            <button class="home-action-btn" id="btnHomeOpenSim">
-              <span class="home-btn-icon">📱</span>
-              <div class="home-btn-texts">
-                <strong>Mobile Simulator</strong>
-                <small>iPhone & Android device frames</small>
-              </div>
-            </button>
-
-            <button class="home-action-btn" id="btnHomeCheckLinks">
-              <span class="home-btn-icon">🔗</span>
-              <div class="home-btn-texts">
-                <strong>Link & Button Inspector</strong>
-                <small>Check 200 OK & 301/404 redirects</small>
-              </div>
-            </button>
-
-            <button class="home-action-btn" id="btnHomeCapture">
-              <span class="home-btn-icon">📸</span>
-              <div class="home-btn-texts">
-                <strong>Page & Screen Capture</strong>
-                <small>Crop area, full page stitch</small>
-              </div>
-            </button>
-          </div>
+    <!-- 2. Image & Media Extractor Panel (Shown ONLY when Image option is clicked) -->
+    <div class="image-extractor-panel hidden" id="imageExtractorPanel">
+      <!-- Scan Progress Status -->
+      <div class="scan-status-container" id="scanStatusContainer">
+        <div class="scan-status-header">
+          <span class="scan-label" id="scanStatusText">Scanning page...</span>
+          <span class="scan-counter" id="scanCounter">0</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressBar"></div>
         </div>
       </div>
 
-      <!-- Dynamic Cards Rendered Here -->
-      <div class="cards-grid" id="cardsGrid"></div>
-    </main>
+      <!-- Filters & Categories -->
+      <nav class="category-nav" id="categoryNav">
+        <button class="cat-pill active" data-category="all">
+          All <span class="cat-count" id="countAll">0</span>
+        </button>
+        <button class="cat-pill" data-category="mobile">
+          📱 Mobile <span class="cat-count" id="countMobile">0</span>
+        </button>
+        <button class="cat-pill" data-category="image">
+          Images <span class="cat-count" id="countImages">0</span>
+        </button>
+        <button class="cat-pill" data-category="video">
+          Videos <span class="cat-count" id="countVideos">0</span>
+        </button>
+        <button class="cat-pill" data-category="logo">
+          Logos <span class="cat-count" id="countLogos">0</span>
+        </button>
+        <button class="cat-pill" data-category="svg">
+          SVGs <span class="cat-count" id="countSvgs">0</span>
+        </button>
+        <button class="cat-pill" data-category="background">
+          Backgrounds <span class="cat-count" id="countBgs">0</span>
+        </button>
+        <button class="cat-pill" id="catPillLinks" data-category="links" style="background:#f0fdf4; border-color:#86efac; color:#15803d; font-weight:700;">
+          🔗 Links & Buttons <span class="cat-count" id="countLinks">Check</span>
+        </button>
+      </nav>
 
-    <!-- Bottom Action Bar (Batch Download & Archive) -->
-    <footer class="app-footer">
-      <div class="footer-left">
-        <div class="archive-format-wrap">
-          <label for="archiveFormatSelect" class="sr-only">Format</label>
-          <select id="archiveFormatSelect" class="archive-format-select" title="Choose archive package format">
-            <option value="zip">.ZIP Archive</option>
-            <option value="rar">.RAR Package</option>
-            <option value="tar">.TAR Archive</option>
+      <!-- Toolbar Filters & Search -->
+      <div class="toolbar-controls">
+        <div class="search-input-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Filter by name, dimensions, or ext...">
+          <button class="clear-search hidden" id="btnClearSearch">&times;</button>
+        </div>
+
+        <div class="filter-dropdowns">
+          <select id="deviceFilter" class="select-dropdown" title="Filter by Device (Mobile / Desktop)">
+            <option value="all">All Devices</option>
+            <option value="mobile">📱 Mobile</option>
+            <option value="desktop">💻 Desktop</option>
           </select>
+
+          <select id="sizeFilter" class="select-dropdown" title="Filter by resolution">
+            <option value="all">Any Size</option>
+            <option value="large">Large (> 800px)</option>
+            <option value="medium">Medium (200-800px)</option>
+            <option value="small">Small (< 200px)</option>
+          </select>
+
+          <select id="formatFilter" class="select-dropdown" title="Filter by file format">
+            <option value="all">All Formats</option>
+            <option value="jpg">JPG / JPEG</option>
+            <option value="png">PNG</option>
+            <option value="webp">WEBP</option>
+            <option value="svg">SVG</option>
+            <option value="mp4">MP4 / Video</option>
+            <option value="gif">GIF</option>
+          </select>
+
+          <button class="btn-toggle-view" id="btnToggleView" title="Toggle Grid / List View">
+            <svg id="viewGridIcon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Selection Row -->
+      <div class="selection-row">
+        <label class="select-all-label">
+          <input type="checkbox" id="selectAllCheckbox" checked>
+          <span class="custom-checkbox"></span>
+          <span class="select-all-text" id="selectionCountText">All Selected (0)</span>
+        </label>
+
+        <div class="selection-quick-links">
+          <button class="btn-link" id="btnInvertSelection">Invert</button>
+          <button class="btn-link" id="btnRescan">Deep Scan</button>
+        </div>
+      </div>
+
+      <!-- Assets Container (Grid/List) -->
+      <main class="assets-gallery" id="assetsGallery">
+        <!-- Loading Skeleton -->
+        <div class="skeleton-state" id="skeletonLoader">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
         </div>
 
-        <label class="webp-convert-pill" title="Convert images to modern .WEBP format before downloading">
-          <input type="checkbox" id="chkConvertToWebp">
-          <span class="webp-indicator"></span>
-          <span class="webp-label">→ WEBP</span>
-        </label>
-      </div>
+        <!-- Dynamic Cards Rendered Here -->
+        <div class="cards-grid" id="cardsGrid"></div>
+      </main>
 
-      <div class="footer-actions">
-        <button class="btn-direct-download" id="btnDirectDownload" title="Download directly to folder">
-          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <span>Folder</span>
-        </button>
+      <!-- Bottom Action Bar (Batch Download & Archive) -->
+      <footer class="app-footer">
+        <div class="footer-left">
+          <div class="archive-format-wrap">
+            <label for="archiveFormatSelect" class="sr-only">Format</label>
+            <select id="archiveFormatSelect" class="archive-format-select" title="Choose archive package format">
+              <option value="zip">.ZIP Archive</option>
+              <option value="rar">.RAR Package</option>
+              <option value="tar">.TAR Archive</option>
+            </select>
+          </div>
 
-        <button class="btn-primary-download" id="btnDownloadArchive">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          <span id="downloadArchiveBtnText">Download RAR / ZIP</span>
-        </button>
-      </div>
-    </footer>
+          <label class="webp-convert-pill" title="Convert images to modern .WEBP format before downloading">
+            <input type="checkbox" id="chkConvertToWebp">
+            <span class="webp-indicator"></span>
+            <span class="webp-label">→ WEBP</span>
+          </label>
+        </div>
+
+        <div class="footer-actions">
+          <button class="btn-direct-download" id="btnDirectDownload" title="Download directly to folder">
+            <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Folder</span>
+          </button>
+
+          <button class="btn-primary-download" id="btnDownloadArchive">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span id="downloadArchiveBtnText">Download RAR / ZIP</span>
+          </button>
+        </div>
+      </footer>
+    </div>
 
     <!-- Settings Modal -->
     <div class="modal-backdrop hidden" id="settingsModal">

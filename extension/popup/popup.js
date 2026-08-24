@@ -102,39 +102,53 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnCopyPreviewUrl = document.getElementById('btnCopyPreviewUrl');
   const btnDownloadPreviewItem = document.getElementById('btnDownloadPreviewItem');
 
+  const homeDashboardView = document.getElementById('homeDashboardView');
+  const imageExtractorPanel = document.getElementById('imageExtractorPanel');
+
   const toast = document.getElementById('toast');
 
-  // Initialize
+  // Initialize - Starts on clean Empty Home Dashboard!
   init();
 
   async function init() {
     setupEventListeners();
-    await fetchActiveTabAndScan();
+    showHomeDashboard();
+  }
+
+  function showHomeDashboard() {
+    homeDashboardView?.classList.remove('hidden');
+    imageExtractorPanel?.classList.add('hidden');
+    linkCheckerDrawer?.classList.add('hidden');
+    btnLinkCheckerToggle?.classList.remove('active');
+    captureDrawer?.classList.add('hidden');
+    btnCaptureToggle?.classList.remove('active');
+    btnImageExtractorHome?.classList.remove('active');
+  }
+
+  async function showImageExtractor() {
+    homeDashboardView?.classList.add('hidden');
+    imageExtractorPanel?.classList.remove('hidden');
+    linkCheckerDrawer?.classList.add('hidden');
+    btnLinkCheckerToggle?.classList.remove('active');
+    captureDrawer?.classList.add('hidden');
+    btnCaptureToggle?.classList.remove('active');
+    btnImageExtractorHome?.classList.add('active');
+
+    if (allAssets.length === 0) {
+      await fetchActiveTabAndScan();
+    }
   }
 
   function setupEventListeners() {
-    // Brand Logo/Title click resets to Image Extractor Home
+    // Brand Logo/Title click returns to Empty Home Dashboard
     const brandGroup = document.querySelector('.brand-group');
     if (brandGroup) {
       brandGroup.style.cursor = 'pointer';
-      brandGroup.addEventListener('click', () => {
-        // Close all drawers
-        linkCheckerDrawer?.classList.add('hidden');
-        btnLinkCheckerToggle?.classList.remove('active');
-        captureDrawer?.classList.add('hidden');
-        btnCaptureToggle?.classList.remove('active');
-
-        // Reset category to all
-        categoryPills.forEach(p => p.classList.toggle('active', p.dataset.category === 'all'));
-        currentCategory = 'all';
-        searchInput.value = '';
-        btnClearSearch.classList.add('hidden');
-        applyFilters();
-      });
+      brandGroup.addEventListener('click', showHomeDashboard);
     }
 
     // Empty Home Dashboard Action Buttons
-    document.getElementById('btnHomeScanNow')?.addEventListener('click', fetchActiveTabAndScan);
+    document.getElementById('btnHomeScanNow')?.addEventListener('click', showImageExtractor);
 
     document.getElementById('btnHomeOpenSim')?.addEventListener('click', () => {
       const url = currentTab?.url || 'https://wikipedia.org';
@@ -143,6 +157,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.getElementById('btnHomeCheckLinks')?.addEventListener('click', () => {
+      homeDashboardView?.classList.add('hidden');
+      imageExtractorPanel?.classList.add('hidden');
       btnImageExtractorHome?.classList.remove('active');
       captureDrawer?.classList.add('hidden');
       btnCaptureToggle?.classList.remove('active');
@@ -152,6 +168,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.getElementById('btnHomeCapture')?.addEventListener('click', () => {
+      homeDashboardView?.classList.add('hidden');
+      imageExtractorPanel?.classList.add('hidden');
       btnImageExtractorHome?.classList.remove('active');
       linkCheckerDrawer?.classList.add('hidden');
       btnLinkCheckerToggle?.classList.remove('active');
@@ -255,37 +273,30 @@ document.addEventListener('DOMContentLoaded', async () => {
       chrome.tabs.create({ url: simUrl });
     });
 
-    // Dedicated Image & Media Extractor Home Button
+    // Dedicated Image & Media Extractor Button (Toggles Extractor & Home)
     if (btnImageExtractorHome) {
       btnImageExtractorHome.addEventListener('click', () => {
-        // Close other drawers
-        linkCheckerDrawer?.classList.add('hidden');
-        btnLinkCheckerToggle?.classList.remove('active');
-        captureDrawer?.classList.add('hidden');
-        btnCaptureToggle?.classList.remove('active');
-
-        // Highlight Image Extractor
-        btnImageExtractorHome.classList.add('active');
-
-        // Reset category to all
-        categoryPills.forEach(p => p.classList.toggle('active', p.dataset.category === 'all'));
-        currentCategory = 'all';
-        searchInput.value = '';
-        btnClearSearch.classList.add('hidden');
-        applyFilters();
-        showToast('Image Extractor Gallery');
+        if (!imageExtractorPanel.classList.contains('hidden')) {
+          showHomeDashboard();
+        } else {
+          showImageExtractor();
+        }
       });
     }
 
     // Link & Button Health Checker Drawer Toggle
     btnLinkCheckerToggle.addEventListener('click', () => {
+      homeDashboardView?.classList.add('hidden');
+      imageExtractorPanel?.classList.add('hidden');
       btnImageExtractorHome?.classList.remove('active');
       captureDrawer?.classList.add('hidden');
       btnCaptureToggle?.classList.remove('active');
+
       const isHidden = linkCheckerDrawer.classList.toggle('hidden');
       btnLinkCheckerToggle.classList.toggle('active', !isHidden);
-      if (isHidden) btnImageExtractorHome?.classList.add('active');
-      if (!isHidden && allPageLinks.length === 0) {
+      if (isHidden) {
+        showHomeDashboard();
+      } else if (allPageLinks.length === 0) {
         runLinkScan();
       }
     });
@@ -306,12 +317,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Screen Capture Options Drawer
     btnCaptureToggle.addEventListener('click', () => {
+      homeDashboardView?.classList.add('hidden');
+      imageExtractorPanel?.classList.add('hidden');
       btnImageExtractorHome?.classList.remove('active');
       linkCheckerDrawer?.classList.add('hidden');
       btnLinkCheckerToggle?.classList.remove('active');
+
       const isHidden = captureDrawer.classList.toggle('hidden');
       btnCaptureToggle.classList.toggle('active', !isHidden);
-      if (isHidden) btnImageExtractorHome?.classList.add('active');
+      if (isHidden) {
+        showHomeDashboard();
+      }
     });
 
     // 1. Selected Area (Ctrl+Shift+S)
