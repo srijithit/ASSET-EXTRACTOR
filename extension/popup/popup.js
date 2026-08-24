@@ -110,6 +110,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   init();
 
   async function init() {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      currentTab = tab;
+    } catch (e) {
+      console.warn('Tab query error:', e);
+    }
     setupEventListeners();
     showHomeDashboard();
   }
@@ -138,6 +144,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function showLinkChecker() {
+    homeDashboardView?.classList.add('hidden');
+    imageExtractorPanel?.classList.add('hidden');
+    btnImageExtractorHome?.classList.remove('active');
+    captureDrawer?.classList.add('hidden');
+    btnCaptureToggle?.classList.remove('active');
+    linkCheckerDrawer?.classList.remove('hidden');
+    btnLinkCheckerToggle?.classList.add('active');
+
+    if (allPageLinks.length === 0) {
+      runLinkScan();
+    }
+  }
+
+  function showCaptureDrawer() {
+    homeDashboardView?.classList.add('hidden');
+    imageExtractorPanel?.classList.add('hidden');
+    btnImageExtractorHome?.classList.remove('active');
+    linkCheckerDrawer?.classList.add('hidden');
+    btnLinkCheckerToggle?.classList.remove('active');
+    captureDrawer?.classList.remove('hidden');
+    btnCaptureToggle?.classList.add('active');
+  }
+
   function setupEventListeners() {
     // Brand Logo/Title click returns to Empty Home Dashboard
     const brandGroup = document.querySelector('.brand-group');
@@ -149,32 +179,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Empty Home Dashboard Action Buttons
     document.getElementById('btnHomeScanNow')?.addEventListener('click', showImageExtractor);
 
-    document.getElementById('btnHomeOpenSim')?.addEventListener('click', () => {
+    document.getElementById('btnHomeOpenSim')?.addEventListener('click', async () => {
+      if (!currentTab?.id) {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        currentTab = tab;
+      }
       const url = currentTab?.url || 'https://wikipedia.org';
       const simUrl = chrome.runtime.getURL(`simulator/simulator.html?url=${encodeURIComponent(url)}`);
       chrome.tabs.create({ url: simUrl });
     });
 
-    document.getElementById('btnHomeCheckLinks')?.addEventListener('click', () => {
-      homeDashboardView?.classList.add('hidden');
-      imageExtractorPanel?.classList.add('hidden');
-      btnImageExtractorHome?.classList.remove('active');
-      captureDrawer?.classList.add('hidden');
-      btnCaptureToggle?.classList.remove('active');
-      linkCheckerDrawer?.classList.remove('hidden');
-      btnLinkCheckerToggle?.classList.add('active');
-      if (allPageLinks.length === 0) runLinkScan();
-    });
-
-    document.getElementById('btnHomeCapture')?.addEventListener('click', () => {
-      homeDashboardView?.classList.add('hidden');
-      imageExtractorPanel?.classList.add('hidden');
-      btnImageExtractorHome?.classList.remove('active');
-      linkCheckerDrawer?.classList.add('hidden');
-      btnLinkCheckerToggle?.classList.remove('active');
-      captureDrawer?.classList.remove('hidden');
-      btnCaptureToggle?.classList.add('active');
-    });
+    document.getElementById('btnHomeCheckLinks')?.addEventListener('click', showLinkChecker);
+    document.getElementById('btnHomeCapture')?.addEventListener('click', showCaptureDrawer);
 
     // Category pills
     categoryPills.forEach(pill => {
@@ -273,34 +289,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Dedicated Image & Media Extractor Button (Toggles Extractor & Home)
-    if (btnImageExtractorHome) {
-      btnImageExtractorHome.addEventListener('click', () => {
-        if (!imageExtractorPanel.classList.contains('hidden')) {
-          showHomeDashboard();
-        } else {
-          showImageExtractor();
-        }
-      });
-    }
-
-    // Link & Button Health Checker Drawer Toggle
-    btnLinkCheckerToggle.addEventListener('click', () => {
-      homeDashboardView?.classList.add('hidden');
-      imageExtractorPanel?.classList.add('hidden');
-      btnImageExtractorHome?.classList.remove('active');
-      captureDrawer?.classList.add('hidden');
-      btnCaptureToggle?.classList.remove('active');
-
-      const isHidden = linkCheckerDrawer.classList.toggle('hidden');
-      btnLinkCheckerToggle.classList.toggle('active', !isHidden);
-      if (isHidden) {
+    btnImageExtractorHome?.addEventListener('click', () => {
+      if (!imageExtractorPanel.classList.contains('hidden')) {
         showHomeDashboard();
-      } else if (allPageLinks.length === 0) {
-        runLinkScan();
+      } else {
+        showImageExtractor();
       }
     });
 
-    btnRunLinkScan.addEventListener('click', runLinkScan);
+    // Link & Button Health Checker Drawer Toggle
+    btnLinkCheckerToggle?.addEventListener('click', () => {
+      if (!linkCheckerDrawer.classList.contains('hidden')) {
+        showHomeDashboard();
+      } else {
+        showLinkChecker();
+      }
+    });
+
+    btnRunLinkScan?.addEventListener('click', runLinkScan);
 
     lcChips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -311,21 +317,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
-    lcSearchInput.addEventListener('input', renderLinkList);
-    btnExportLinksCsv.addEventListener('click', exportLinkReportCsv);
+    lcSearchInput?.addEventListener('input', renderLinkList);
+    btnExportLinksCsv?.addEventListener('click', exportLinkReportCsv);
 
-    // Screen Capture Options Drawer
-    btnCaptureToggle.addEventListener('click', () => {
-      homeDashboardView?.classList.add('hidden');
-      imageExtractorPanel?.classList.add('hidden');
-      btnImageExtractorHome?.classList.remove('active');
-      linkCheckerDrawer?.classList.add('hidden');
-      btnLinkCheckerToggle?.classList.remove('active');
-
-      const isHidden = captureDrawer.classList.toggle('hidden');
-      btnCaptureToggle.classList.toggle('active', !isHidden);
-      if (isHidden) {
+    // Screen Capture Options Drawer Toggle
+    btnCaptureToggle?.addEventListener('click', () => {
+      if (!captureDrawer.classList.contains('hidden')) {
         showHomeDashboard();
+      } else {
+        showCaptureDrawer();
       }
     });
 
