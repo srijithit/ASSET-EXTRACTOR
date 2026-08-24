@@ -104,6 +104,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Category pills
     categoryPills.forEach(pill => {
       pill.addEventListener('click', () => {
+        if (pill.dataset.category === 'links') {
+          const isHidden = linkCheckerDrawer.classList.toggle('hidden');
+          btnLinkCheckerToggle.classList.toggle('active', !isHidden);
+          if (!isHidden && allPageLinks.length === 0) {
+            runLinkScan();
+          }
+          return;
+        }
         categoryPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         currentCategory = pill.dataset.category;
