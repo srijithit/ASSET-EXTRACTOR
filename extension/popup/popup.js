@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnDirectDownload = document.getElementById('btnDirectDownload');
 
   const btnPopout = document.getElementById('btnPopout');
+  const btnImageExtractorHome = document.getElementById('btnImageExtractorHome');
   const btnOpenSimulator = document.getElementById('btnOpenSimulator');
   const btnSettings = document.getElementById('btnSettings');
   const settingsModal = document.getElementById('settingsModal');
@@ -217,12 +218,36 @@ document.addEventListener('DOMContentLoaded', async () => {
       chrome.tabs.create({ url: simUrl });
     });
 
+    // Dedicated Image & Media Extractor Home Button
+    if (btnImageExtractorHome) {
+      btnImageExtractorHome.addEventListener('click', () => {
+        // Close other drawers
+        linkCheckerDrawer?.classList.add('hidden');
+        btnLinkCheckerToggle?.classList.remove('active');
+        captureDrawer?.classList.add('hidden');
+        btnCaptureToggle?.classList.remove('active');
+
+        // Highlight Image Extractor
+        btnImageExtractorHome.classList.add('active');
+
+        // Reset category to all
+        categoryPills.forEach(p => p.classList.toggle('active', p.dataset.category === 'all'));
+        currentCategory = 'all';
+        searchInput.value = '';
+        btnClearSearch.classList.add('hidden');
+        applyFilters();
+        showToast('Image Extractor Gallery');
+      });
+    }
+
     // Link & Button Health Checker Drawer Toggle
     btnLinkCheckerToggle.addEventListener('click', () => {
+      btnImageExtractorHome?.classList.remove('active');
       captureDrawer?.classList.add('hidden');
       btnCaptureToggle?.classList.remove('active');
       const isHidden = linkCheckerDrawer.classList.toggle('hidden');
       btnLinkCheckerToggle.classList.toggle('active', !isHidden);
+      if (isHidden) btnImageExtractorHome?.classList.add('active');
       if (!isHidden && allPageLinks.length === 0) {
         runLinkScan();
       }
@@ -244,10 +269,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Screen Capture Options Drawer
     btnCaptureToggle.addEventListener('click', () => {
+      btnImageExtractorHome?.classList.remove('active');
       linkCheckerDrawer?.classList.add('hidden');
       btnLinkCheckerToggle?.classList.remove('active');
       const isHidden = captureDrawer.classList.toggle('hidden');
       btnCaptureToggle.classList.toggle('active', !isHidden);
+      if (isHidden) btnImageExtractorHome?.classList.add('active');
     });
 
     // 1. Selected Area (Ctrl+Shift+S)
