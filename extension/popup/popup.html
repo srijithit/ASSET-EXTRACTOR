@@ -10,11 +10,9 @@
   <div class="app-container">
     <!-- Header -->
     <header class="app-header">
-      <div class="brand-group">
-        <div class="logo-icon">
-          <span class="card-layer card-back"></span>
-          <span class="card-layer card-mid"></span>
-          <span class="card-layer card-front"></span>
+      <div class="brand-group" id="brandHomeTrigger">
+        <div class="logo-icon-wrap">
+          <img src="../icons/logo.png" class="brand-logo-img" alt="SJ Logo">
         </div>
         <div class="brand-text-block">
           <h1 class="brand-title">Asset <span>Extractors</span></h1>
@@ -309,12 +307,49 @@
         <div class="skeleton-card"></div>
       </div>
 
-      <!-- Empty State -->
+      <!-- Empty Home Page Dashboard -->
       <div class="empty-state hidden" id="emptyState">
-        <div class="empty-icon">🔍</div>
-        <h3>No assets found</h3>
-        <p>Try switching categories, clearing filters, or running a Deep Scan.</p>
-        <button class="btn-secondary" id="btnDeepScanEmpty">Run Deep Page Scan</button>
+        <div class="home-empty-card">
+          <div class="home-logo-glow">
+            <img src="../icons/logo.png" class="home-sj-logo" alt="SJ Logo">
+          </div>
+          <h3 class="home-title">Asset Extractors</h3>
+          <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, or inspect unbroken link redirections.</p>
+
+          <div class="home-action-grid">
+            <button class="home-action-btn primary" id="btnHomeScanNow">
+              <span class="home-btn-icon">⚡</span>
+              <div class="home-btn-texts">
+                <strong>Scan Active Page</strong>
+                <small>Extract all images & media</small>
+              </div>
+            </button>
+
+            <button class="home-action-btn" id="btnHomeOpenSim">
+              <span class="home-btn-icon">📱</span>
+              <div class="home-btn-texts">
+                <strong>Mobile Simulator</strong>
+                <small>iPhone & Android device frames</small>
+              </div>
+            </button>
+
+            <button class="home-action-btn" id="btnHomeCheckLinks">
+              <span class="home-btn-icon">🔗</span>
+              <div class="home-btn-texts">
+                <strong>Link & Button Inspector</strong>
+                <small>Check 200 OK & 301/404 redirects</small>
+              </div>
+            </button>
+
+            <button class="home-action-btn" id="btnHomeCapture">
+              <span class="home-btn-icon">📸</span>
+              <div class="home-btn-texts">
+                <strong>Page & Screen Capture</strong>
+                <small>Crop area, full page stitch</small>
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Dynamic Cards Rendered Here -->

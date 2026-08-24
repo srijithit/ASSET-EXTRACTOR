@@ -133,6 +133,32 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
 
+    // Empty Home Dashboard Action Buttons
+    document.getElementById('btnHomeScanNow')?.addEventListener('click', fetchActiveTabAndScan);
+
+    document.getElementById('btnHomeOpenSim')?.addEventListener('click', () => {
+      const url = currentTab?.url || 'https://wikipedia.org';
+      const simUrl = chrome.runtime.getURL(`simulator/simulator.html?url=${encodeURIComponent(url)}`);
+      chrome.tabs.create({ url: simUrl });
+    });
+
+    document.getElementById('btnHomeCheckLinks')?.addEventListener('click', () => {
+      btnImageExtractorHome?.classList.remove('active');
+      captureDrawer?.classList.add('hidden');
+      btnCaptureToggle?.classList.remove('active');
+      linkCheckerDrawer?.classList.remove('hidden');
+      btnLinkCheckerToggle?.classList.add('active');
+      if (allPageLinks.length === 0) runLinkScan();
+    });
+
+    document.getElementById('btnHomeCapture')?.addEventListener('click', () => {
+      btnImageExtractorHome?.classList.remove('active');
+      linkCheckerDrawer?.classList.add('hidden');
+      btnLinkCheckerToggle?.classList.remove('active');
+      captureDrawer?.classList.remove('hidden');
+      btnCaptureToggle?.classList.add('active');
+    });
+
     // Category pills
     categoryPills.forEach(pill => {
       pill.addEventListener('click', () => {
@@ -453,27 +479,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         progressBar.style.width = '0%';
         scanStatusText.textContent = 'Welcome to Asset Extractors';
         scanCounter.textContent = '0';
-        emptyState.innerHTML = `
-          <div class="empty-icon">🖼️</div>
-          <h3>Image Extractor Home</h3>
-          <p>Navigate to any website (e.g. <strong>apple.com</strong>, <strong>amazon.com</strong>, <strong>google.com</strong>) to automatically extract all images, logos, videos, and SVGs!</p>
-          <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
-            <button class="btn-secondary" id="btnOpenSimHome" style="padding:6px 12px; font-size:0.775rem;">📱 Open Mobile Simulator</button>
-            <button class="btn-secondary" id="btnOpenWebHome" style="padding:6px 12px; font-size:0.775rem;">🌐 Launch Web App</button>
-          </div>
-        `;
         emptyState.classList.remove('hidden');
-
-        document.getElementById('btnOpenSimHome')?.addEventListener('click', () => {
-          const simUrl = chrome.runtime.getURL('simulator/simulator.html');
-          chrome.tabs.create({ url: simUrl });
-        });
-        document.getElementById('btnOpenWebHome')?.addEventListener('click', () => {
-          chrome.storage.local.get(['renderBackendUrl'], (res) => {
-            const url = res.renderBackendUrl || 'http://localhost:3000';
-            chrome.tabs.create({ url });
-          });
-        });
         return;
       }
 
