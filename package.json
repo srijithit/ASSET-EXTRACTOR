@@ -1,0 +1,29 @@
+{
+  "name": "asset-extractors-web",
+  "version": "1.0.0",
+  "description": "Full Web App version of Asset Extractors for extracting images, videos, logos and packaging as ZIP/RAR with WebP conversion. Ready to host on Render.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "asset-extractor",
+    "image-downloader",
+    "webp-converter",
+    "scraper",
+    "render-deploy"
+  ],
+  "author": "srijith (https://srijith.vercel.app/)",
+  "license": "MIT",
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrabAll - Full Asset Studio</title>
+  <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+  <div class="studio-layout">
+    <!-- Top Navigation Bar -->
+    <header class="studio-header">
+      <div class="brand-section">
+        <div class="logo-icon">
+          <span class="card-layer card-back"></span>
+          <span class="card-layer card-mid"></span>
+          <span class="card-layer card-front"></span>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title-row">
+            <h2>Asset <span>Extractors</span> Studio</h2>
+            <a href="https://srijith.vercel.app/" target="_blank" rel="noopener noreferrer" class="dev-tag-studio" title="Developer Portfolio">
+              <span>DEV by <strong>srijith</strong></span>
+              <svg viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          </div>
+          <span class="page-source" id="sourceUrl">Loading source page...</span>
+        </div>
+      </div>
+
+      <div class="global-actions">
+        <div class="stat-pill" id="totalStats">0 Assets Loaded</div>
+        <button class="btn-action-outline" id="btnOpenSimStudio" title="Open Mobile Device Simulator">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+          Device Simulator
+        </button>
+        <button class="btn-action-outline" id="btnDeepScan">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          Deep Rescan
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="studio-body">
+      <!-- Sidebar Filters -->
+      <aside class="studio-sidebar">
+        <div class="sidebar-section">
+          <h4>Asset Types</h4>
+          <ul class="filter-list">
+            <li class="active" data-cat="all">All Media <span class="badge-count" id="cAll">0</span></li>
+            <li data-cat="mobile">📱 Mobile Responsive <span class="badge-count" id="cMobile">0</span></li>
+            <li data-cat="image">Images <span class="badge-count" id="cImg">0</span></li>
+            <li data-cat="video">Videos & Audio <span class="badge-count" id="cVid">0</span></li>
+            <li data-cat="logo">Logos & Icons <span class="badge-count" id="cLogo">0</span></li>
+            <li data-cat="svg">SVGs & Vectors <span class="badge-count" id="cSvg">0</span></li>
+            <li data-cat="background">CSS Backgrounds <span class="badge-count" id="cBg">0</span></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h4>Resolution</h4>
+          <div class="radio-group">
+            <label><input type="radio" name="res" value="all" checked> All Resolutions</label>
+            <label><input type="radio" name="res" value="hd"> Ultra HD / 4K (> 1920px)</label>
+            <label><input type="radio" name="res" value="large"> Large (800 - 1920px)</label>
+            <label><input type="radio" name="res" value="medium"> Medium (200 - 800px)</label>
+            <label><input type="radio" name="res" value="small"> Small (< 200px)</label>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4>File Extensions</h4>
+          <div class="tag-filters" id="tagFilters">
+            <span class="ext-tag active" data-ext="all">ALL</span>
+            <span class="ext-tag" data-ext="jpg">JPG</span>
+            <span class="ext-tag" data-ext="png">PNG</span>
+            <span class="ext-tag" data-ext="webp">WEBP</span>
+            <span class="ext-tag" data-ext="svg">SVG</span>
+            <span class="ext-tag" data-ext="mp4">MP4</span>
+            <span class="ext-tag" data-ext="gif">GIF</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <section class="studio-content">
+        <!-- Control Strip -->
+        <div class="content-toolbar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="vSearch" placeholder="Search filenames, urls, dimensions...">
+          </div>
+
+          <div class="bulk-selection-bar">
+            <label class="check-container">
+              <input type="checkbox" id="vSelectAll" checked>
+              <span id="vSelectionSummary">Selected (0)</span>
+            </label>
+            <button class="btn-text" id="vInvert">Invert</button>
+          </div>
+
+          <div class="export-group">
+            <label class="webp-convert-pill" title="Convert images to modern .WEBP format before downloading" style="display:inline-flex; align-items:center; gap:5px; padding:6px 10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; cursor:pointer;">
+              <input type="checkbox" id="vChkWebp" style="accent-color:#16a34a; cursor:pointer;">
+              <span style="font-size:0.75rem; font-weight:800; color:#15803d;">→ WEBP</span>
+            </label>
+
+            <select id="vArchiveType" class="select-export">
+              <option value="zip">.ZIP Archive</option>
+              <option value="rar">.RAR Package</option>
+            </select>
+            <button class="btn-primary-export" id="vBtnExport">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span id="vExportText">Download Batch Archive</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-container" id="vGallery"></div>
+      </section>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-backdrop hidden" id="vPreviewModal">
+      <div class="v-modal-card">
+        <button class="v-modal-close" id="vClosePreview">&times;</button>
+        <div class="v-preview-stage" id="vPreviewStage"></div>
+        <div class="v-preview-footer">
+          <div class="v-preview-meta" id="vPreviewMeta"></div>
+          <div class="v-preview-btns">
+            <button class="btn-secondary" id="vBtnCopyLink">Copy URL</button>
+            <button class="btn-primary" id="vBtnDownloadItem">Download</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-notification hidden" id="vToast"></div>
+  </div>
+
+  <script src="../lib/jszip.min.js"></script>
+  <script src="viewer.js"></script>
+</body>
+</html>

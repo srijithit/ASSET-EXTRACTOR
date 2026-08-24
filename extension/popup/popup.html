@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrabAll - Web Asset Extractor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="logo-icon">
+          <span class="card-layer card-back"></span>
+          <span class="card-layer card-mid"></span>
+          <span class="card-layer card-front"></span>
+        </div>
+        <div class="brand-text-block">
+          <h1 class="brand-title">Asset <span>Extractors</span></h1>
+          <a href="https://srijith.vercel.app/" target="_blank" rel="noopener noreferrer" class="dev-tag" title="Developer Portfolio">
+            <span>DEV by <strong>srijith</strong></span>
+            <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="2" fill="none">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-icon" id="btnOpenSimulator" title="Mobile Device Simulator Studio">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+        </button>
+
+        <button class="btn-icon btn-capture-toggle" id="btnCaptureToggle" title="Screen & Page Capture Options">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+        </button>
+
+        <button class="btn-icon" id="btnPopout" title="Open in Full Tab Viewer">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </button>
+
+        <button class="btn-icon" id="btnSettings" title="Options & Settings">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Screen Capture Drawer / Options Panel -->
+    <div class="capture-drawer hidden" id="captureDrawer">
+      <div class="capture-options-list">
+        <!-- 1. Selected Area -->
+        <button class="capture-card" id="btnCapArea">
+          <div class="cap-left">
+            <div class="cap-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M6 2v14a2 2 0 0 0 2 2h14"></path>
+                <path d="M18 22V8a2 2 0 0 0-2-2H2"></path>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+              </svg>
+            </div>
+            <span class="cap-label">Selected Area</span>
+          </div>
+          <span class="cap-shortcut">Ctrl+Shift+S</span>
+        </button>
+
+        <!-- 2. Full Page -->
+        <button class="capture-card" id="btnCapFull">
+          <div class="cap-left">
+            <div class="cap-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="9" y1="6" x2="15" y2="6"></line>
+                <line x1="9" y1="10" x2="15" y2="10"></line>
+                <line x1="9" y1="14" x2="13" y2="14"></line>
+              </svg>
+            </div>
+            <span class="cap-label">Full Page</span>
+          </div>
+          <span class="cap-shortcut">Ctrl+Shift+E</span>
+        </button>
+
+        <!-- 3. Visible Part -->
+        <button class="capture-card" id="btnCapVisible">
+          <div class="cap-left">
+            <div class="cap-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+            </div>
+            <span class="cap-label">Visible Part</span>
+          </div>
+          <span class="cap-shortcut">Ctrl+Shift+1</span>
+        </button>
+
+        <!-- 4. Whole Screen & Window -->
+        <button class="capture-card" id="btnCapScreen">
+          <div class="cap-left">
+            <div class="cap-icon-box">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+                <circle cx="8" cy="7" r="1"></circle>
+                <circle cx="12" cy="7" r="1"></circle>
+                <circle cx="16" cy="7" r="1"></circle>
+              </svg>
+            </div>
+            <span class="cap-label">Whole Screen & Window</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scan Progress Status -->
+    <div class="scan-status-container" id="scanStatusContainer">
+      <div class="scan-status-header">
+        <span class="scan-label" id="scanStatusText">Scanning page...</span>
+        <span class="scan-counter" id="scanCounter">0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBar"></div>
+      </div>
+    </div>
+
+    <!-- Filters & Categories -->
+    <nav class="category-nav" id="categoryNav">
+      <button class="cat-pill active" data-category="all">
+        All <span class="cat-count" id="countAll">0</span>
+      </button>
+      <button class="cat-pill" data-category="mobile">
+        📱 Mobile <span class="cat-count" id="countMobile">0</span>
+      </button>
+      <button class="cat-pill" data-category="image">
+        Images <span class="cat-count" id="countImages">0</span>
+      </button>
+      <button class="cat-pill" data-category="video">
+        Videos <span class="cat-count" id="countVideos">0</span>
+      </button>
+      <button class="cat-pill" data-category="logo">
+        Logos <span class="cat-count" id="countLogos">0</span>
+      </button>
+      <button class="cat-pill" data-category="svg">
+        SVGs <span class="cat-count" id="countSvgs">0</span>
+      </button>
+      <button class="cat-pill" data-category="background">
+        Backgrounds <span class="cat-count" id="countBgs">0</span>
+      </button>
+    </nav>
+
+    <!-- Toolbar Filters & Search -->
+    <div class="toolbar-controls">
+      <div class="search-input-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Filter by name, dimensions, or ext...">
+        <button class="clear-search hidden" id="btnClearSearch">&times;</button>
+      </div>
+
+      <div class="filter-dropdowns">
+        <select id="deviceFilter" class="select-dropdown" title="Filter by Device (Mobile / Desktop)">
+          <option value="all">All Devices</option>
+          <option value="mobile">📱 Mobile</option>
+          <option value="desktop">💻 Desktop</option>
+        </select>
+
+        <select id="sizeFilter" class="select-dropdown" title="Filter by resolution">
+          <option value="all">Any Size</option>
+          <option value="large">Large (> 800px)</option>
+          <option value="medium">Medium (200-800px)</option>
+          <option value="small">Small (< 200px)</option>
+        </select>
+
+        <select id="formatFilter" class="select-dropdown" title="Filter by file format">
+          <option value="all">All Formats</option>
+          <option value="jpg">JPG / JPEG</option>
+          <option value="png">PNG</option>
+          <option value="webp">WEBP</option>
+          <option value="svg">SVG</option>
+          <option value="mp4">MP4 / Video</option>
+          <option value="gif">GIF</option>
+        </select>
+
+        <button class="btn-toggle-view" id="btnToggleView" title="Toggle Grid / List View">
+          <svg id="viewGridIcon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Selection Row -->
+    <div class="selection-row">
+      <label class="select-all-label">
+        <input type="checkbox" id="selectAllCheckbox" checked>
+        <span class="custom-checkbox"></span>
+        <span class="select-all-text" id="selectionCountText">All Selected (0)</span>
+      </label>
+
+      <div class="selection-quick-links">
+        <button class="btn-link" id="btnInvertSelection">Invert</button>
+        <button class="btn-link" id="btnRescan">Deep Scan</button>
+      </div>
+    </div>
+
+    <!-- Assets Container (Grid/List) -->
+    <main class="assets-gallery" id="assetsGallery">
+      <!-- Loading Skeleton -->
+      <div class="skeleton-state" id="skeletonLoader">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state hidden" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <h3>No assets found</h3>
+        <p>Try switching categories, clearing filters, or running a Deep Scan.</p>
+        <button class="btn-secondary" id="btnDeepScanEmpty">Run Deep Page Scan</button>
+      </div>
+
+      <!-- Dynamic Cards Rendered Here -->
+      <div class="cards-grid" id="cardsGrid"></div>
+    </main>
+
+    <!-- Bottom Action Bar (Batch Download & Archive) -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <div class="archive-format-wrap">
+          <label for="archiveFormatSelect" class="sr-only">Format</label>
+          <select id="archiveFormatSelect" class="archive-format-select" title="Choose archive package format">
+            <option value="zip">.ZIP Archive</option>
+            <option value="rar">.RAR Package</option>
+            <option value="tar">.TAR Archive</option>
+          </select>
+        </div>
+
+        <label class="webp-convert-pill" title="Convert images to modern .WEBP format before downloading">
+          <input type="checkbox" id="chkConvertToWebp">
+          <span class="webp-indicator"></span>
+          <span class="webp-label">→ WEBP</span>
+        </label>
+      </div>
+
+      <div class="footer-actions">
+        <button class="btn-direct-download" id="btnDirectDownload" title="Download directly to folder">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Folder</span>
+        </button>
+
+        <button class="btn-primary-download" id="btnDownloadArchive">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span id="downloadArchiveBtnText">Download RAR / ZIP</span>
+        </button>
+      </div>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div class="modal-backdrop hidden" id="settingsModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Asset Extractors Settings</h3>
+          <button class="btn-close-modal" id="btnCloseSettings">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-item">
+            <label class="setting-title">Auto-convert to WebP format</label>
+            <span class="setting-desc">Convert PNG/JPG/SVG images into lightweight .WEBP</span>
+            <input type="checkbox" id="settingAutoWebp">
+          </div>
+          <div class="setting-item">
+            <label class="setting-title">WebP Quality</label>
+            <span class="setting-desc">Compression quality for WebP conversion</span>
+            <select id="settingWebpQuality">
+              <option value="0.95">95% (Maximum Quality)</option>
+              <option value="0.85" selected>85% (Optimal Balance)</option>
+              <option value="0.75">75% (Smallest File Size)</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label class="setting-title">Auto-organize subfolders</label>
+            <span class="setting-desc">Organize downloads into /images, /videos, /logos</span>
+            <input type="checkbox" id="settingSubfolders" checked>
+          </div>
+          <div class="setting-item">
+            <label class="setting-title">Default Archive Format</label>
+            <span class="setting-desc">Preferred compression format for batch export</span>
+            <select id="settingDefaultFormat">
+              <option value="zip">ZIP archive (.zip)</option>
+              <option value="rar">RAR package (.rar)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Media Full Preview Modal -->
+    <div class="modal-backdrop hidden" id="previewModal">
+      <div class="preview-modal-card">
+        <button class="btn-close-preview" id="btnClosePreview">&times;</button>
+        <div class="preview-media-stage" id="previewMediaStage"></div>
+        <div class="preview-meta-bar" id="previewMetaBar">
+          <div class="preview-meta-info">
+            <div class="preview-filename" id="previewFilename"></div>
+            <div class="preview-details" id="previewDetails"></div>
+          </div>
+          <div class="preview-actions">
+            <button class="btn-secondary btn-sm" id="btnCopyPreviewUrl">Copy Link</button>
+            <button class="btn-primary btn-sm" id="btnDownloadPreviewItem">Download</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification hidden" id="toast"></div>
+  </div>
+
+  <script src="../lib/jszip.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
