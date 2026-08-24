@@ -54,9 +54,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnOpenSimulator = document.getElementById('btnOpenSimulator');
   const btnSettings = document.getElementById('btnSettings');
   const settingsModal = document.getElementById('settingsModal');
-  const btnCloseSettings = document.getElementById('btnCloseSettings');
   const settingAutoWebp = document.getElementById('settingAutoWebp');
   const settingWebpQuality = document.getElementById('settingWebpQuality');
+  const settingRenderUrl = document.getElementById('settingRenderUrl');
 
   // Screen Capture Options
   const btnCaptureToggle = document.getElementById('btnCaptureToggle');
@@ -245,6 +245,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Settings Modal
+    chrome.storage.local.get(['renderBackendUrl'], (res) => {
+      if (res.renderBackendUrl && settingRenderUrl) {
+        settingRenderUrl.value = res.renderBackendUrl;
+      }
+    });
+
+    if (settingRenderUrl) {
+      settingRenderUrl.addEventListener('change', () => {
+        let val = settingRenderUrl.value.trim();
+        if (val && !val.startsWith('http://') && !val.startsWith('https://')) {
+          val = 'https://' + val;
+          settingRenderUrl.value = val;
+        }
+        chrome.storage.local.set({ renderBackendUrl: val });
+        showToast('Render cloud backend saved!');
+      });
+    }
+
     btnSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
     btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
     settingsModal.addEventListener('click', (e) => {
