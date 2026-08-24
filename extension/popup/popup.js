@@ -41,8 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const cardsGrid = document.getElementById('cardsGrid');
   const skeletonLoader = document.getElementById('skeletonLoader');
-  const emptyState = document.getElementById('emptyState');
-  const btnDeepScanEmpty = document.getElementById('btnDeepScanEmpty');
+  const galleryEmptyState = document.getElementById('galleryEmptyState');
 
   const archiveFormatSelect = document.getElementById('archiveFormatSelect');
   const chkConvertToWebp = document.getElementById('chkConvertToWebp');
@@ -649,10 +648,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     cardsGrid.innerHTML = '';
 
     if (filteredAssets.length === 0) {
-      emptyState.classList.remove('hidden');
+      galleryEmptyState?.classList.remove('hidden');
       return;
     } else {
-      emptyState.classList.add('hidden');
+      galleryEmptyState?.classList.add('hidden');
     }
 
     const fragment = document.createDocumentFragment();
@@ -1099,8 +1098,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function showLoading(show) {
-    skeletonLoader.classList.toggle('hidden', !show);
-    if (show) emptyState.classList.add('hidden');
+    skeletonLoader?.classList.toggle('hidden', !show);
+    if (show) galleryEmptyState?.classList.add('hidden');
   }
 
   function showStatusError(msg) {
