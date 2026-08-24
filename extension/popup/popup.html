@@ -30,6 +30,13 @@
       </div>
 
       <div class="header-actions">
+        <button class="btn-icon" id="btnLinkCheckerToggle" title="Check Links & Button Redirections (Unbroken/Broken)">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+        </button>
+
         <button class="btn-icon" id="btnOpenSimulator" title="Mobile Device Simulator Studio">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -126,6 +133,56 @@
             <span class="cap-label">Whole Screen & Window</span>
           </div>
         </button>
+      </div>
+    <!-- Link & Button Redirection Health Checker Drawer -->
+    <div class="link-checker-drawer hidden" id="linkCheckerDrawer">
+      <div class="lc-header">
+        <div class="lc-title-box">
+          <h4>🔗 Link & Button Health Inspector</h4>
+          <span class="lc-subtitle">Checks broken links, 301/302 redirects, and button targets</span>
+        </div>
+        <button class="btn-lc-scan" id="btnRunLinkScan">⚡ Check All Links</button>
+      </div>
+
+      <!-- Health Stats -->
+      <div class="lc-stats-grid">
+        <div class="lc-stat-card ok">
+          <span class="lc-stat-num" id="lcCountOk">0</span>
+          <span class="lc-stat-lbl">🟢 Unbroken</span>
+        </div>
+        <div class="lc-stat-card redirect">
+          <span class="lc-stat-num" id="lcCountRedirect">0</span>
+          <span class="lc-stat-lbl">🟡 Redirects</span>
+        </div>
+        <div class="lc-stat-card broken">
+          <span class="lc-stat-num" id="lcCountBroken">0</span>
+          <span class="lc-stat-lbl">🔴 Broken</span>
+        </div>
+        <div class="lc-stat-card total">
+          <span class="lc-stat-num" id="lcCountTotal">0</span>
+          <span class="lc-stat-lbl">Total Links</span>
+        </div>
+      </div>
+
+      <!-- Filters & Search -->
+      <div class="lc-filter-row">
+        <div class="lc-chips">
+          <button class="lc-chip active" data-filter="all">All</button>
+          <button class="lc-chip" data-filter="ok">🟢 Working</button>
+          <button class="lc-chip" data-filter="redirect">🟡 Redirect</button>
+          <button class="lc-chip" data-filter="broken">🔴 Broken</button>
+          <button class="lc-chip" data-filter="button">🔘 Buttons</button>
+        </div>
+        <input type="text" id="lcSearchInput" class="lc-search-input" placeholder="Search link text or URL...">
+      </div>
+
+      <!-- Links List Container -->
+      <div class="lc-list-container" id="lcListContainer">
+        <div class="lc-empty">Click "⚡ Check All Links" to inspect buttons & links on this webpage.</div>
+      </div>
+
+      <div class="lc-footer-actions">
+        <button class="btn-lc-export" id="btnExportLinksCsv">📥 Export Report (CSV)</button>
       </div>
     </div>
 

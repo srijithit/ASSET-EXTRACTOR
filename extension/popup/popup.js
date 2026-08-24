@@ -66,6 +66,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnCapVisible = document.getElementById('btnCapVisible');
   const btnCapScreen = document.getElementById('btnCapScreen');
 
+  // Link & Button Health Checker
+  const btnLinkCheckerToggle = document.getElementById('btnLinkCheckerToggle');
+  const linkCheckerDrawer = document.getElementById('linkCheckerDrawer');
+  const btnRunLinkScan = document.getElementById('btnRunLinkScan');
+  const lcCountOk = document.getElementById('lcCountOk');
+  const lcCountRedirect = document.getElementById('lcCountRedirect');
+  const lcCountBroken = document.getElementById('lcCountBroken');
+  const lcCountTotal = document.getElementById('lcCountTotal');
+  const lcChips = document.querySelectorAll('.lc-chip');
+  const lcSearchInput = document.getElementById('lcSearchInput');
+  const lcListContainer = document.getElementById('lcListContainer');
+  const btnExportLinksCsv = document.getElementById('btnExportLinksCsv');
+
+  let allPageLinks = [];
+  let currentLcFilter = 'all';
+
   const previewModal = document.getElementById('previewModal');
   const btnClosePreview = document.getElementById('btnClosePreview');
   const previewMediaStage = document.getElementById('previewMediaStage');
@@ -172,6 +188,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       const simUrl = chrome.runtime.getURL(`simulator/simulator.html?url=${encodeURIComponent(url)}`);
       chrome.tabs.create({ url: simUrl });
     });
+
+    // Link & Button Health Checker Drawer Toggle
+    btnLinkCheckerToggle.addEventListener('click', () => {
+      const isHidden = linkCheckerDrawer.classList.toggle('hidden');
+      btnLinkCheckerToggle.classList.toggle('active', !isHidden);
+      if (!isHidden && allPageLinks.length === 0) {
+        runLinkScan();
+      }
+    });
+
+    btnRunLinkScan.addEventListener('click', runLinkScan);
+
+    lcChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        lcChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentLcFilter = chip.dataset.filter;
+        renderLinkList();
+      });
+    });
+
+    lcSearchInput.addEventListener('input', renderLinkList);
+    btnExportLinksCsv.addEventListener('click', exportLinkReportCsv);
 
     // Screen Capture Options Drawer
     btnCaptureToggle.addEventListener('click', () => {
@@ -933,5 +972,165 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.execCommand('copy');
       document.body.removeChild(input);
     });
+  }
+
+  /**
+   * Run Link & Button Health Scan
+   */
+  async function runLinkScan() {
+    if (!currentTab?.id) return;
+    btnRunLinkScan.disabled = true;
+    btnRunLinkScan.textContent = '⏳ Checking...';
+    lcListContainer.innerHTML = '<div class="lc-empty">Scanning webpage for all links, buttons, and redirection paths...</div>';
+
+    try {
+      // Inject link_checker.js
+      await chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ['scripts/link_checker.js']
+      });
+
+      // Execute scan
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        func: () => window.scanAndCheckLinks()
+      });
+
+      allPageLinks = results[0]?.result || [];
+      updateLinkStats();
+      renderLinkList();
+
+      // Check status in parallel batches of 5
+      const BATCH_SIZE = 5;
+      for (let i = 0; i < allPageLinks.length; i += BATCH_SIZE) {
+        const batch = allPageLinks.slice(i, i + BATCH_SIZE);
+        await Promise.all(batch.map(async (link) => {
+          try {
+            const checked = await chrome.scripting.executeScript({
+              target: { tabId: currentTab.id },
+              func: (item) => window.checkSingleLinkStatus(item),
+              args: [link]
+            });
+            if (checked[0]?.result) {
+              Object.assign(link, checked[0].result);
+            }
+          } catch (e) {
+            link.status = 'broken';
+            link.statusCode = 404;
+            link.statusText = 'Unreachable';
+          }
+        }));
+
+        updateLinkStats();
+        renderLinkList();
+      }
+
+      showToast(`Link check finished! Scanned ${allPageLinks.length} items.`);
+    } catch (err) {
+      console.warn('Link checker error:', err);
+      showToast('Could not inspect links on this page.');
+    } finally {
+      btnRunLinkScan.disabled = false;
+      btnRunLinkScan.textContent = '⚡ Check All Links';
+    }
+  }
+
+  function updateLinkStats() {
+    const ok = allPageLinks.filter(l => l.status === 'ok').length;
+    const redirect = allPageLinks.filter(l => l.status === 'redirect').length;
+    const broken = allPageLinks.filter(l => l.status === 'broken').length;
+
+    lcCountOk.textContent = ok;
+    lcCountRedirect.textContent = redirect;
+    lcCountBroken.textContent = broken;
+    lcCountTotal.textContent = allPageLinks.length;
+  }
+
+  function renderLinkList() {
+    const q = lcSearchInput.value.trim().toLowerCase();
+
+    const filtered = allPageLinks.filter(l => {
+      if (currentLcFilter === 'ok' && l.status !== 'ok') return false;
+      if (currentLcFilter === 'redirect' && l.status !== 'redirect') return false;
+      if (currentLcFilter === 'broken' && l.status !== 'broken') return false;
+      if (currentLcFilter === 'button' && l.type !== 'button') return false;
+
+      if (q) {
+        const txt = `${l.label} ${l.url} ${l.statusText}`.toLowerCase();
+        if (!txt.includes(q)) return false;
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      lcListContainer.innerHTML = `<div class="lc-empty">${allPageLinks.length === 0 ? 'Click "⚡ Check All Links" to inspect buttons & links on this page.' : 'No links matching current filter.'}</div>`;
+      return;
+    }
+
+    lcListContainer.innerHTML = '';
+    const frag = document.createDocumentFragment();
+
+    filtered.forEach(link => {
+      const item = document.createElement('div');
+      item.className = 'lc-item';
+
+      const typeIcon = link.type === 'button' ? '🔘' : (link.isExternal ? '🌐' : '🔗');
+      const badgeClass = link.status || 'pending';
+      const badgeText = link.status === 'ok' ? '200 OK' : (link.status === 'redirect' ? '301 / 302' : (link.status === 'broken' ? 'BROKEN' : 'CHECKING'));
+
+      item.innerHTML = `
+        <div class="lc-item-info">
+          <div class="lc-item-label">${typeIcon} ${link.label || link.url}</div>
+          <div class="lc-item-url" title="${link.url}">${link.url}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="lc-badge ${badgeClass}">${badgeText}</span>
+          <div class="lc-actions">
+            <button class="btn-lc-act" title="Copy Link" data-url="${link.url}">📋</button>
+            <button class="btn-lc-act" title="Open Link" data-open="${link.url}">↗</button>
+          </div>
+        </div>
+      `;
+
+      item.querySelector('[data-url]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyToClipboard(link.url);
+        showToast('Link copied to clipboard!');
+      });
+
+      item.querySelector('[data-open]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        chrome.tabs.create({ url: link.url });
+      });
+
+      frag.appendChild(item);
+    });
+
+    lcListContainer.appendChild(frag);
+  }
+
+  function exportLinkReportCsv() {
+    if (allPageLinks.length === 0) {
+      showToast('No links scanned yet!');
+      return;
+    }
+
+    let csv = 'Type,Label,URL,Status,Status Code,Response Time (ms),Redirection Target\n';
+    allPageLinks.forEach(l => {
+      const label = `"${(l.label || '').replace(/"/g, '""')}"`;
+      const url = `"${(l.url || '').replace(/"/g, '""')}"`;
+      const red = `"${(l.redirectUrl || '').replace(/"/g, '""')}"`;
+      csv += `${l.type},${label},${url},${l.status},${l.statusCode},${l.responseTimeMs || 0},${red}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = `Link_Report_${getCleanDomainName()}_${Date.now().toString(36)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('Exported Link Health Report (CSV)!');
   }
 });

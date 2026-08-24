@@ -313,6 +313,112 @@ app.post('/api/extract', async (req, res) => {
 });
 
 /**
+ * POST /api/check-links
+ * Scans all links and buttons on a target webpage and tests redirection status
+ */
+app.post('/api/check-links', async (req, res) => {
+  let { url } = req.body;
+  if (!url) return res.status(400).json({ success: false, error: 'URL is required.' });
+  if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+
+  try {
+    const response = await axios.get(url, {
+      headers: { 'User-Agent': USER_AGENTS.desktop },
+      timeout: 12000
+    });
+
+    const $ = cheerio.load(response.data);
+    const baseUri = url;
+    const items = [];
+    const seen = new Set();
+
+    // 1. Anchors
+    $('a[href]').each((i, el) => {
+      const rawHref = $(el).attr('href');
+      const fullUrl = cleanUrl(rawHref, baseUri);
+      if (fullUrl && !seen.has(fullUrl)) {
+        seen.add(fullUrl);
+        const text = $(el).text().trim() || $(el).attr('title') || 'Link';
+        items.push({
+          id: 'link_' + (i + 1),
+          type: 'anchor',
+          label: text.substring(0, 60),
+          url: fullUrl,
+          isExternal: new URL(fullUrl).origin !== new URL(baseUri).origin,
+          status: 'pending',
+          statusCode: 0
+        });
+      }
+    });
+
+    // 2. Buttons
+    $('button, [role="button"]').each((i, el) => {
+      const dataHref = $(el).attr('data-href') || $(el).attr('data-url');
+      const fullUrl = cleanUrl(dataHref, baseUri);
+      if (fullUrl && !seen.has(fullUrl)) {
+        seen.add(fullUrl);
+        const text = $(el).text().trim() || 'Button Action';
+        items.push({
+          id: 'btn_' + (i + 1),
+          type: 'button',
+          label: text.substring(0, 60),
+          url: fullUrl,
+          isExternal: new URL(fullUrl).origin !== new URL(baseUri).origin,
+          status: 'pending',
+          statusCode: 0
+        });
+      }
+    });
+
+    // Check status in parallel batches of 6
+    const BATCH_SIZE = 6;
+    for (let i = 0; i < items.length; i += BATCH_SIZE) {
+      const batch = items.slice(i, i + BATCH_SIZE);
+      await Promise.all(batch.map(async (item) => {
+        const start = Date.now();
+        try {
+          const checkResp = await axios.head(item.url, {
+            headers: { 'User-Agent': USER_AGENTS.desktop },
+            timeout: 6000,
+            maxRedirects: 5,
+            validateStatus: () => true
+          });
+          item.responseTimeMs = Date.now() - start;
+          item.statusCode = checkResp.status;
+          if (checkResp.status >= 200 && checkResp.status < 300) {
+            item.status = 'ok';
+            item.statusText = `${checkResp.status} OK (Unbroken)`;
+          } else if (checkResp.status >= 300 && checkResp.status < 400) {
+            item.status = 'redirect';
+            item.statusText = `Redirect (${checkResp.status})`;
+          } else {
+            item.status = 'broken';
+            item.statusText = `${checkResp.status} Error`;
+          }
+        } catch (e) {
+          item.responseTimeMs = Date.now() - start;
+          item.status = 'broken';
+          item.statusCode = 404;
+          item.statusText = 'Unreachable / Broken';
+        }
+      }));
+    }
+
+    res.json({
+      success: true,
+      pageUrl: url,
+      totalCount: items.length,
+      unbrokenCount: items.filter(l => l.status === 'ok').length,
+      redirectCount: items.filter(l => l.status === 'redirect').length,
+      brokenCount: items.filter(l => l.status === 'broken').length,
+      links: items
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * GET /api/proxy
  * Proxies cross-origin media images
  */
