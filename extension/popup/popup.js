@@ -101,6 +101,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function setupEventListeners() {
+    // Brand Logo/Title click resets to Image Extractor Home
+    const brandGroup = document.querySelector('.brand-group');
+    if (brandGroup) {
+      brandGroup.style.cursor = 'pointer';
+      brandGroup.addEventListener('click', () => {
+        // Close all drawers
+        linkCheckerDrawer?.classList.add('hidden');
+        btnLinkCheckerToggle?.classList.remove('active');
+        captureDrawer?.classList.add('hidden');
+        btnCaptureToggle?.classList.remove('active');
+
+        // Reset category to all
+        categoryPills.forEach(p => p.classList.toggle('active', p.dataset.category === 'all'));
+        currentCategory = 'all';
+        searchInput.value = '';
+        btnClearSearch.classList.add('hidden');
+        applyFilters();
+      });
+    }
+
     // Category pills
     categoryPills.forEach(pill => {
       pill.addEventListener('click', () => {
@@ -345,9 +365,32 @@ document.addEventListener('DOMContentLoaded', async () => {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       currentTab = tab;
 
-      if (!tab || !tab.id || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://')) {
-        showStatusError('Cannot extract assets from system or browser pages.');
+      if (!tab || !tab.id || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://') || tab.url.startsWith('chrome-extension://')) {
         showLoading(false);
+        progressBar.style.width = '0%';
+        scanStatusText.textContent = 'Welcome to Asset Extractors';
+        scanCounter.textContent = '0';
+        emptyState.innerHTML = `
+          <div class="empty-icon">🖼️</div>
+          <h3>Image Extractor Home</h3>
+          <p>Navigate to any website (e.g. <strong>apple.com</strong>, <strong>amazon.com</strong>, <strong>google.com</strong>) to automatically extract all images, logos, videos, and SVGs!</p>
+          <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
+            <button class="btn-secondary" id="btnOpenSimHome" style="padding:6px 12px; font-size:0.775rem;">📱 Open Mobile Simulator</button>
+            <button class="btn-secondary" id="btnOpenWebHome" style="padding:6px 12px; font-size:0.775rem;">🌐 Launch Web App</button>
+          </div>
+        `;
+        emptyState.classList.remove('hidden');
+
+        document.getElementById('btnOpenSimHome')?.addEventListener('click', () => {
+          const simUrl = chrome.runtime.getURL('simulator/simulator.html');
+          chrome.tabs.create({ url: simUrl });
+        });
+        document.getElementById('btnOpenWebHome')?.addEventListener('click', () => {
+          chrome.storage.local.get(['renderBackendUrl'], (res) => {
+            const url = res.renderBackendUrl || 'http://localhost:3000';
+            chrome.tabs.create({ url });
+          });
+        });
         return;
       }
 
