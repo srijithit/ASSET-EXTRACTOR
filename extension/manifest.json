@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Asset Extractors - Web Media Extractor",
-  "version": "1.0.0",
-  "description": "Extract images, videos, audio, SVGs, logos, and web assets from any webpage with one-click batch archive download. DEV by srijith (https://srijith.vercel.app/)",
+  "version": "1.1.0",
+  "description": "Extract images, videos, audio, SVGs, logos, pick colors, inspect fonts, and audit SEO with one-click batch archive download. DEV by srijith (https://srijith.vercel.app/)",
   "author": "srijith (https://srijith.vercel.app/)",
   "permissions": [
     "activeTab",
@@ -58,7 +58,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["lib/jszip.min.js", "icons/*"],
+      "resources": ["lib/jszip.min.js", "icons/*", "scripts/*"],
       "matches": ["<all_urls>"]
     }
   ]
