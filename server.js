@@ -419,6 +419,79 @@ app.post('/api/check-links', async (req, res) => {
 });
 
 /**
+ * POST /api/seo-audit
+ * Audits ALT tags, Next-Gen WebP formats, image dimensions, and meta tags for SEO health
+ */
+app.post('/api/seo-audit', async (req, res) => {
+  let { url } = req.body;
+  if (!url) return res.status(400).json({ success: false, error: 'URL is required.' });
+  if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+
+  try {
+    const response = await axios.get(url, {
+      headers: { 'User-Agent': USER_AGENTS.desktop },
+      timeout: 12000
+    });
+
+    const $ = cheerio.load(response.data);
+    const baseUri = url;
+    const items = [];
+    let withAlt = 0;
+    let missingAlt = 0;
+    let nextGenCount = 0;
+
+    $('img').each((i, el) => {
+      const src = cleanUrl($(el).attr('src') || $(el).attr('data-src'), baseUri);
+      if (!src) return;
+
+      const alt = ($(el).attr('alt') || '').trim();
+      const hasAlt = alt.length > 0;
+      if (hasAlt) withAlt++; else missingAlt++;
+
+      const ext = getExtension(src);
+      const isNextGen = ['webp', 'avif', 'svg'].includes(ext.toLowerCase());
+      if (isNextGen) nextGenCount++;
+
+      const width = parseInt($(el).attr('width'), 10) || 0;
+      const height = parseInt($(el).attr('height'), 10) || 0;
+
+      const filename = getFileName(src, 'image');
+      const suggestedAlt = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+      items.push({
+        id: 'seo_' + (i + 1),
+        src: src,
+        filename: filename,
+        alt: alt,
+        hasAlt: hasAlt,
+        suggestedAlt: suggestedAlt,
+        dimensions: width && height ? `${width} × ${height} px` : 'Auto Dimensions',
+        ext: ext,
+        isNextGen: isNextGen
+      });
+    });
+
+    const total = items.length;
+    const altScore = total > 0 ? (withAlt / total) * 60 : 60;
+    const nextGenRatio = total > 0 ? (nextGenCount / total) * 40 : 40;
+    const score = Math.round(altScore + nextGenRatio);
+
+    res.json({
+      success: true,
+      score: score,
+      totalCount: total,
+      withAlt: withAlt,
+      missingAlt: missingAlt,
+      nextGenCount: nextGenCount,
+      nextGenRatioPct: total > 0 ? Math.round((nextGenCount / total) * 100) : 100,
+      items: items
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * GET /api/proxy
  * Proxies cross-origin media images
  */

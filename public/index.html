@@ -34,6 +34,26 @@
         </div>
       </div>
 
+      <!-- Extension-like Tool Navigation Switcher -->
+      <nav class="nav-tools-bar">
+        <button class="nav-tool-btn active" id="tabExtractor">
+          <span class="tool-icon">🖼️</span>
+          <span>Asset Extractor</span>
+        </button>
+        <button class="nav-tool-btn" id="tabLinkInspector">
+          <span class="tool-icon">🔗</span>
+          <span>Link Inspector</span>
+        </button>
+        <button class="nav-tool-btn" id="tabSeoAudit">
+          <span class="tool-icon">🎯</span>
+          <span>SEO Optimizer</span>
+        </button>
+        <button class="nav-tool-btn" id="tabSimulator">
+          <span class="tool-icon">📱</span>
+          <span>Mobile Simulator</span>
+        </button>
+      </nav>
+
       <div class="nav-right">
         <div class="host-pill">
           <span class="status-dot"></span>
@@ -42,94 +62,200 @@
       </div>
     </header>
 
-    <!-- Hero Search Bar -->
-    <section class="hero-search-section">
-      <div class="hero-content">
-        <h2>Extract & Download Web Media Online</h2>
-        <p>Extract all images, videos, SVGs, and brand logos from any website URL and batch download as .ZIP / .RAR with WebP conversion.</p>
-        
-        <form class="search-form" id="extractForm">
-          <div class="input-wrapper">
-            <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="targetUrlInput" placeholder="Enter any website URL (e.g. https://apple.com, https://dhiwise.com)" required>
-          </div>
+    <!-- 1. TOOL VIEW 1: Asset Extractor -->
+    <div class="tool-view-panel" id="viewExtractor">
+      <!-- Hero Search Bar -->
+      <section class="hero-search-section">
+        <div class="hero-content">
+          <h2>Extract & Download Web Media Online</h2>
+          <p>Extract all images, videos, SVGs, and brand logos from any website URL and batch download as .ZIP / .RAR with WebP conversion.</p>
           
-          <select id="deviceSelector" class="device-select" title="Emulate Device Viewport">
-            <option value="desktop">💻 Desktop Mode</option>
-            <option value="mobile">📱 Mobile Mode</option>
-          </select>
+          <form class="search-form" id="extractForm">
+            <div class="input-wrapper">
+              <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="targetUrlInput" placeholder="Enter any website URL (e.g. https://apple.com, https://dhigrowth.com)" required>
+            </div>
+            
+            <select id="deviceSelector" class="device-select" title="Emulate Device Viewport">
+              <option value="desktop">💻 Desktop Mode</option>
+              <option value="mobile">📱 Mobile Mode</option>
+            </select>
 
-          <button type="submit" class="btn-primary-extract" id="btnExtract">
-            <span id="btnExtractText">Extract Assets</span>
-          </button>
-        </form>
-      </div>
-    </section>
+            <button type="submit" class="btn-primary-extract" id="btnExtract">
+              <span id="btnExtractText">Extract Assets</span>
+            </button>
+          </form>
+        </div>
+      </section>
 
-    <!-- Results Section -->
-    <main class="results-section hidden" id="resultsSection">
-      <!-- Toolbar & Category Chips -->
-      <div class="results-header-bar">
-        <div class="meta-source">
-          <h3 id="resPageTitle">Page Assets</h3>
-          <a href="#" id="resPageLink" target="_blank" rel="noopener noreferrer">https://...</a>
+      <!-- Results Section -->
+      <main class="results-section hidden" id="resultsSection">
+        <div class="results-header-bar">
+          <div class="meta-source">
+            <h3 id="resPageTitle">Page Assets</h3>
+            <a href="#" id="resPageLink" target="_blank" rel="noopener noreferrer">https://...</a>
+          </div>
+
+          <div class="bulk-actions-toolbar">
+            <label class="webp-pill" title="Convert all images to modern WebP format before downloading">
+              <input type="checkbox" id="chkWebpWeb">
+              <span>→ WEBP</span>
+            </label>
+
+            <select id="archiveTypeSelect" class="archive-select">
+              <option value="zip">.ZIP Archive</option>
+              <option value="rar">.RAR Package</option>
+            </select>
+
+            <button class="btn-download-all" id="btnDownloadBatch">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span id="btnBatchText">Download Selected (0)</span>
+            </button>
+          </div>
         </div>
 
-        <div class="bulk-actions-toolbar">
-          <label class="webp-pill" title="Convert all images to modern WebP format before downloading">
-            <input type="checkbox" id="chkWebpWeb">
-            <span>→ WEBP</span>
-          </label>
+        <div class="filters-row">
+          <div class="category-pills">
+            <button class="cat-chip active" data-cat="all">All <span id="cAll">0</span></button>
+            <button class="cat-chip" data-cat="mobile">📱 Mobile <span id="cMobile">0</span></button>
+            <button class="cat-chip" data-cat="image">Images <span id="cImg">0</span></button>
+            <button class="cat-chip" data-cat="video">Videos <span id="cVid">0</span></button>
+            <button class="cat-chip" data-cat="logo">Logos <span id="cLogo">0</span></button>
+            <button class="cat-chip" data-cat="svg">SVGs <span id="cSvg">0</span></button>
+            <button class="cat-chip" data-cat="background">Backgrounds <span id="cBg">0</span></button>
+          </div>
 
-          <select id="archiveTypeSelect" class="archive-select">
-            <option value="zip">.ZIP Archive</option>
-            <option value="rar">.RAR Package</option>
-          </select>
-
-          <button class="btn-download-all" id="btnDownloadBatch">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span id="btnBatchText">Download Selected (0)</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Filters & Categories -->
-      <div class="filters-row">
-        <div class="category-pills">
-          <button class="cat-chip active" data-cat="all">All <span id="cAll">0</span></button>
-          <button class="cat-chip" data-cat="mobile">📱 Mobile <span id="cMobile">0</span></button>
-          <button class="cat-chip" data-cat="image">Images <span id="cImg">0</span></button>
-          <button class="cat-chip" data-cat="video">Videos <span id="cVid">0</span></button>
-          <button class="cat-chip" data-cat="logo">Logos <span id="cLogo">0</span></button>
-          <button class="cat-chip" data-cat="svg">SVGs <span id="cSvg">0</span></button>
-          <button class="cat-chip" data-cat="background">Backgrounds <span id="cBg">0</span></button>
+          <div class="right-filters">
+            <input type="text" id="liveSearchInput" placeholder="Filter by filename/type...">
+            <label class="select-all-wrap">
+              <input type="checkbox" id="selectAllCheckbox" checked>
+              <span>Select All</span>
+            </label>
+          </div>
         </div>
 
-        <div class="right-filters">
-          <input type="text" id="liveSearchInput" placeholder="Filter by filename/type...">
-          <label class="select-all-wrap">
-            <input type="checkbox" id="selectAllCheckbox" checked>
-            <span>Select All</span>
-          </label>
-        </div>
-      </div>
+        <div class="assets-grid" id="assetsGrid"></div>
+      </main>
+    </div>
 
-      <!-- Assets Gallery Grid -->
-      <div class="assets-grid" id="assetsGrid"></div>
-    </main>
+    <!-- 2. TOOL VIEW 2: Link & Button Health Inspector -->
+    <div class="tool-view-panel hidden" id="viewLinkInspector">
+      <section class="tool-hero-section">
+        <div class="hero-content">
+          <h2>🔗 Link & Button Health Inspector</h2>
+          <p>Inspect all links, anchor tags, and buttons on any webpage. Verify 200 OK responses, 301 redirects, and 404 broken links.</p>
+
+          <form class="search-form" id="linkForm">
+            <div class="input-wrapper">
+              <input type="text" id="linkUrlInput" placeholder="Enter URL to test links (e.g. https://apple.com)" required>
+            </div>
+            <button type="submit" class="btn-primary-extract" id="btnCheckLinks">⚡ Inspect Links</button>
+          </form>
+        </div>
+      </section>
+
+      <main class="results-section hidden" id="linkResultsSection">
+        <div class="web-stats-grid">
+          <div class="web-stat-card ok">
+            <span class="web-stat-num" id="lcOkCount">0</span>
+            <span class="web-stat-lbl">200 OK (Unbroken)</span>
+          </div>
+          <div class="web-stat-card redirect">
+            <span class="web-stat-num" id="lcRedirectCount">0</span>
+            <span class="web-stat-lbl">301 / 302 Redirects</span>
+          </div>
+          <div class="web-stat-card broken">
+            <span class="web-stat-num" id="lcBrokenCount">0</span>
+            <span class="web-stat-lbl">404 / Broken</span>
+          </div>
+          <div class="web-stat-card total">
+            <span class="web-stat-num" id="lcTotalCount">0</span>
+            <span class="web-stat-lbl">Total Scanned</span>
+          </div>
+        </div>
+
+        <div class="filters-row">
+          <input type="text" id="linkSearchInput" placeholder="Search link label or target URL..." style="flex:1; max-width:360px; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px;">
+          <button class="btn-modal-sec" id="btnExportLinkReport">📥 Export Link CSV Report</button>
+        </div>
+
+        <div class="web-link-table" id="linkTableContainer"></div>
+      </main>
+    </div>
+
+    <!-- 3. TOOL VIEW 3: SEO Asset & Image Optimizer -->
+    <div class="tool-view-panel hidden" id="viewSeoAudit">
+      <section class="tool-hero-section">
+        <div class="hero-content">
+          <h2>🎯 SEO Asset & Image Optimizer</h2>
+          <p>Audit ALT text coverage, Next-Gen WebP/AVIF format adoption, and explicit image dimensions to boost PageSpeed & SEO scores.</p>
+
+          <form class="search-form" id="seoForm">
+            <div class="input-wrapper">
+              <input type="text" id="seoUrlInput" placeholder="Enter URL to run SEO Audit (e.g. https://apple.com)" required>
+            </div>
+            <button type="submit" class="btn-primary-extract" id="btnRunSeo">⚡ Run SEO Audit</button>
+          </form>
+        </div>
+      </section>
+
+      <main class="results-section hidden" id="seoResultsSection">
+        <div class="web-stats-grid">
+          <div class="web-stat-card score">
+            <span class="web-stat-num" id="seoScoreText">--/100</span>
+            <span class="web-stat-lbl">SEO Asset Score</span>
+          </div>
+          <div class="web-stat-card ok">
+            <span class="web-stat-num" id="seoOkCount">0</span>
+            <span class="web-stat-lbl">🟢 With ALT</span>
+          </div>
+          <div class="web-stat-card warning">
+            <span class="web-stat-num" id="seoMissingCount">0</span>
+            <span class="web-stat-lbl">⚠️ Missing ALT</span>
+          </div>
+          <div class="web-stat-card info">
+            <span class="web-stat-num" id="seoNextGenPct">0%</span>
+            <span class="web-stat-lbl">WebP Next-Gen</span>
+          </div>
+        </div>
+
+        <div class="filters-row">
+          <button class="btn-modal-sec" id="btnWebAutoFixAlt">✨ Auto-Suggest ALT Tags</button>
+          <button class="btn-modal-sec" id="btnExportSeoCsv">📥 Export SEO CSV Report</button>
+        </div>
+
+        <div class="web-seo-list" id="seoListContainer"></div>
+      </main>
+    </div>
+
+    <!-- 4. TOOL VIEW 4: Mobile Simulator Studio -->
+    <div class="tool-view-panel hidden" id="viewSimulator">
+      <section class="tool-hero-section">
+        <div class="hero-content">
+          <h2>📱 Mobile Device Simulator Studio</h2>
+          <p>Test web application responsive layouts across iPhone 16 Pro, Samsung Galaxy S24, Google Pixel 8, and iPad Pro device frames.</p>
+        </div>
+      </section>
+
+      <main class="results-section">
+        <div class="sim-embed-stage" style="width:100%; height:750px; border-radius:12px; overflow:hidden; border:1px solid #cbd5e1; box-shadow:0 8px 30px rgba(0,0,0,0.1);">
+          <iframe id="webSimIframe" src="about:blank" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+      </main>
+    </div>
 
     <!-- Loading State -->
     <div class="loading-state hidden" id="loadingState">
       <div class="spinner"></div>
-      <h3>Scanning & Extracting Web Assets...</h3>
-      <p>Scraping DOM, responsive picture sources, and CSS backgrounds</p>
+      <h3 id="loadingTitle">Scanning & Extracting Web Assets...</h3>
+      <p id="loadingSub">Scraping DOM, responsive media, and links</p>
     </div>
 
     <!-- Preview Modal -->
