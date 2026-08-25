@@ -1533,8 +1533,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Color Picker Functions
   async function pickColorFromPage() {
-    if (!currentTab?.id) return;
+    // 1. Try Native Chrome Extension EyeDropper (Works across entire screen)
+    if ('EyeDropper' in window) {
+      try {
+        const eyeDropper = new window.EyeDropper();
+        const result = await eyeDropper.open();
+        if (result && result.sRGBHex) {
+          const hex = result.sRGBHex;
+          const rgb = hexToRgb(hex);
+          const rgbStr = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 
+          cpColorSwatch.style.background = hex;
+          cpHexInput.value = hex;
+          cpRgbInput.value = rgbStr;
+          saveRecentColor(hex);
+          copyToClipboard(hex);
+          showToast(`Picked & Copied HEX Color: ${hex}`);
+          return;
+        }
+      } catch (e) {
+        console.warn('Eyedropper popup canceled:', e);
+        return;
+      }
+    }
+
+    // 2. Fallback via Tab Content Script
+    if (!currentTab?.id) return;
     try {
       await chrome.scripting.executeScript({
         target: { tabId: currentTab.id },
@@ -1552,9 +1576,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
     } catch (e) {
-      console.warn('Eyedropper error:', e);
-      showToast('Click anywhere on webpage to pick a color.');
+      console.warn('Tab Eyedropper error:', e);
+      showToast('EyeDropper is supported in Chrome 95+.');
     }
+  }
+
+  function hexToRgb(hex) {
+    let c = hex.replace('#', '');
+    if (c.length === 3) c = c.split('').map(x => x + x).join('');
+    const num = parseInt(c, 16);
+    return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
   }
 
   function saveRecentColor(hex) {

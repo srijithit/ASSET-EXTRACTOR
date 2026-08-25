@@ -3,12 +3,6 @@
  */
 
 (function () {
-  if (window.__assetExtractorColorPickerLoaded) {
-    activateEyedropper();
-    return;
-  }
-  window.__assetExtractorColorPickerLoaded = true;
-
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.action === 'ACTIVATE_EYEDROPPER') {
       activateEyedropper().then(res => sendResponse(res));
@@ -18,6 +12,11 @@
       sendResponse({ success: true, palette: palette });
     }
   });
+
+  if (window.__assetExtractorColorPickerLoaded) {
+    return;
+  }
+  window.__assetExtractorColorPickerLoaded = true;
 
   async function activateEyedropper() {
     if ('EyeDropper' in window) {
@@ -38,31 +37,42 @@
         return { success: false, error: 'Color pick canceled' };
       }
     } else {
-      // Fallback canvas/element sampler
-      alert('Chrome EyeDropper API is available in Chrome 95+.');
       return { success: false, error: 'EyeDropper API not supported' };
     }
   }
 
   function extractPageColors() {
     const colors = new Set();
-    const elements = document.querySelectorAll('body, header, nav, main, footer, h1, h2, h3, button, a, div, section');
+    const elements = document.querySelectorAll('body, header, nav, main, footer, h1, h2, h3, button, a, div, section, svg, path');
 
     elements.forEach(el => {
       if (colors.size >= 16) return;
-      const style = window.getComputedStyle(el);
-      const bg = style.backgroundColor;
-      const color = style.color;
+      try {
+        const style = window.getComputedStyle(el);
+        const bg = style.backgroundColor;
+        const color = style.color;
+        const fill = style.fill;
 
-      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
-        const hex = rgbaToHex(bg);
-        if (hex) colors.add(hex);
-      }
-      if (color && color !== 'rgba(0, 0, 0, 0)' && color !== 'transparent') {
-        const hex = rgbaToHex(color);
-        if (hex) colors.add(hex);
-      }
+        if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+          const hex = rgbaToHex(bg);
+          if (hex && hex !== '#ffffff' && hex !== '#000000') colors.add(hex);
+        }
+        if (color && color !== 'rgba(0, 0, 0, 0)' && color !== 'transparent') {
+          const hex = rgbaToHex(color);
+          if (hex) colors.add(hex);
+        }
+        if (fill && fill !== 'none' && fill.startsWith('rgb')) {
+          const hex = rgbaToHex(fill);
+          if (hex) colors.add(hex);
+        }
+      } catch (e) {}
     });
+
+    if (colors.size === 0) {
+      colors.add('#0284c7');
+      colors.add('#0ea5e9');
+      colors.add('#0f172a');
+    }
 
     return Array.from(colors).slice(0, 12);
   }
