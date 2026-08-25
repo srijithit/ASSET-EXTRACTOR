@@ -1,0 +1,22 @@
+{
+  "name": "Asset Extractors - Web Media Extractor",
+  "short_name": "AssetExtractors",
+  "description": "Extract images, videos, SVGs, logos, and web assets from any website online. DEV by srijith",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0284c7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

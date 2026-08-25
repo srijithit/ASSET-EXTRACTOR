@@ -1,7 +1,9 @@
 /* Web App Stylesheet */
 :root {
-  --primary-red: #ea2b2b;
-  --primary-dark: #cc1818;
+  --primary-red: #0284c7;
+  --primary-dark: #0369a1;
+  --primary-blue: #0284c7;
+  --primary-sky: #0ea5e9;
   --bg-main: #f8fafc;
   --card-bg: #ffffff;
   --text-main: #0f172a;
@@ -563,3 +565,77 @@ body {
 }
 
 .hidden { display: none !important; }
+
+/* Mobile Responsive Media Queries */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 16px;
+  }
+
+  .brand-text h1 {
+    font-size: 1.1rem;
+  }
+
+  .hero-search-section {
+    padding: 32px 16px 40px;
+  }
+
+  .hero-content h2 {
+    font-size: 1.35rem;
+  }
+
+  .hero-content p {
+    font-size: 0.825rem;
+  }
+
+  .search-form {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .input-wrapper {
+    width: 100%;
+  }
+
+  .device-select {
+    width: 100%;
+  }
+
+  .btn-primary-extract {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .results-header-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bulk-actions-toolbar {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .category-pills {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 4px;
+    width: 100%;
+  }
+
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .right-filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .assets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+}

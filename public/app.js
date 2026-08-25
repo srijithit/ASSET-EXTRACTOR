@@ -2,6 +2,13 @@
  * Asset Extractors - Web App Client Controller
  */
 
+// Register PWA Service Worker for Mobile App Support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW reg error:', err));
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   let allAssets = [];
   let filteredAssets = [];
