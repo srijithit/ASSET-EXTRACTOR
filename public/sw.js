@@ -1,13 +1,13 @@
 /**
- * Asset Extractors - Mobile PWA Service Worker
+ * Asset Extractors - Mobile PWA Service Worker (v2.0 - Network First)
  */
 
-const CACHE_NAME = 'asset-extractors-pwa-v1';
+const CACHE_NAME = 'asset-extractors-pwa-v2.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/style.css',
-  '/app.js',
+  '/style.css?v=2.0.0',
+  '/app.js?v=2.0.0',
   '/logo.png',
   '/manifest.json'
 ];
@@ -34,11 +34,18 @@ self.addEventListener('activate', (evt) => {
   self.clients.claim();
 });
 
+// Network-First Strategy to ensure live Render updates show instantly
 self.addEventListener('fetch', (evt) => {
   if (evt.request.method !== 'GET') return;
   evt.respondWith(
-    caches.match(evt.request).then((cachedRes) => {
-      return cachedRes || fetch(evt.request).catch(() => cachedRes);
-    })
+    fetch(evt.request)
+      .then((networkRes) => {
+        if (networkRes && networkRes.status === 200) {
+          const resClone = networkRes.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(evt.request, resClone));
+        }
+        return networkRes;
+      })
+      .catch(() => caches.match(evt.request))
   );
 });

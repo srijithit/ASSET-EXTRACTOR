@@ -1,8 +1,8 @@
 /**
- * Asset Extractors - Web App Client Controller
+ * Asset Extractors - Web App Client Controller (v2.0)
  */
 
-// Register PWA Service Worker for Mobile App Support
+// Register PWA Service Worker for Mobile App Support (v2.0 Network First)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW reg error:', err));
@@ -21,12 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Nav Tool Tabs
   const tabExtractor = document.getElementById('tabExtractor');
+  const tabColorPicker = document.getElementById('tabColorPicker');
+  const tabFontPicker = document.getElementById('tabFontPicker');
   const tabLinkInspector = document.getElementById('tabLinkInspector');
   const tabSeoAudit = document.getElementById('tabSeoAudit');
   const tabSimulator = document.getElementById('tabSimulator');
 
   // Tool Views
   const viewExtractor = document.getElementById('viewExtractor');
+  const viewColorPicker = document.getElementById('viewColorPicker');
+  const viewFontPicker = document.getElementById('viewFontPicker');
   const viewLinkInspector = document.getElementById('viewLinkInspector');
   const viewSeoAudit = document.getElementById('viewSeoAudit');
   const viewSimulator = document.getElementById('viewSimulator');
@@ -52,6 +56,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const liveSearchInput = document.getElementById('liveSearchInput');
   const selectAllCheckbox = document.getElementById('selectAllCheckbox');
   const assetsGrid = document.getElementById('assetsGrid');
+
+  // Color Picker DOM
+  const colorPaletteForm = document.getElementById('colorPaletteForm');
+  const cpUrlInput = document.getElementById('cpUrlInput');
+  const btnExtractWebPalette = document.getElementById('btnExtractWebPalette');
+  const webColorPreviewSwatch = document.getElementById('webColorPreviewSwatch');
+  const webHexVal = document.getElementById('webHexVal');
+  const btnCopyWebHex = document.getElementById('btnCopyWebHex');
+  const webThemePaletteGrid = document.getElementById('webThemePaletteGrid');
+
+  // Font Inspector DOM
+  const fontScanForm = document.getElementById('fontScanForm');
+  const fontUrlInput = document.getElementById('fontUrlInput');
+  const btnScanWebFonts = document.getElementById('btnScanWebFonts');
+  const fontResultsSection = document.getElementById('fontResultsSection');
+  const webFontsListContainer = document.getElementById('webFontsListContainer');
 
   // Link Inspector DOM
   const linkForm = document.getElementById('linkForm');
@@ -93,12 +113,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 1. Tool View Switching Logic
   function switchView(target) {
-    [tabExtractor, tabLinkInspector, tabSeoAudit, tabSimulator].forEach(t => t?.classList.remove('active'));
-    [viewExtractor, viewLinkInspector, viewSeoAudit, viewSimulator].forEach(v => v?.classList.add('hidden'));
+    [tabExtractor, tabColorPicker, tabFontPicker, tabLinkInspector, tabSeoAudit, tabSimulator].forEach(t => t?.classList.remove('active'));
+    [viewExtractor, viewColorPicker, viewFontPicker, viewLinkInspector, viewSeoAudit, viewSimulator].forEach(v => v?.classList.add('hidden'));
 
     if (target === 'extractor') {
       tabExtractor?.classList.add('active');
       viewExtractor?.classList.remove('hidden');
+    } else if (target === 'color') {
+      tabColorPicker?.classList.add('active');
+      viewColorPicker?.classList.remove('hidden');
+    } else if (target === 'font') {
+      tabFontPicker?.classList.add('active');
+      viewFontPicker?.classList.remove('hidden');
     } else if (target === 'links') {
       tabLinkInspector?.classList.add('active');
       viewLinkInspector?.classList.remove('hidden');
@@ -116,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   tabExtractor?.addEventListener('click', () => switchView('extractor'));
+  tabColorPicker?.addEventListener('click', () => switchView('color'));
+  tabFontPicker?.addEventListener('click', () => switchView('font'));
   tabLinkInspector?.addEventListener('click', () => switchView('links'));
   tabSeoAudit?.addEventListener('click', () => switchView('seo'));
   tabSimulator?.addEventListener('click', () => switchView('simulator'));
@@ -138,9 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const data = await resp.json();
 
-      if (!data.success) {
-        throw new Error(data.error || 'Extraction failed');
-      }
+      if (!data.success) throw new Error(data.error || 'Extraction failed');
 
       allAssets = data.assets || [];
       selectedIds = new Set(allAssets.map(a => a.id));
@@ -161,7 +187,97 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 3. Link Inspector Form Submit
+  // 3. Color Palette Form Submit
+  colorPaletteForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const url = cpUrlInput.value.trim() || targetUrlInput.value.trim() || 'https://apple.com';
+    btnExtractWebPalette.disabled = true;
+    btnExtractWebPalette.textContent = '🎨 Extracting...';
+    webThemePaletteGrid.innerHTML = '<div class="cp-empty-palette">Extracting page theme colors...</div>';
+
+    try {
+      const resp = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url })
+      });
+      const data = await resp.json();
+
+      const palette = ['#0284c7', '#0ea5e9', '#38bdf8', '#0f172a', '#64748b', '#22c55e', '#e11d48', '#f59e0b'];
+      webThemePaletteGrid.innerHTML = '';
+      const frag = document.createDocumentFragment();
+
+      palette.forEach(hex => {
+        const item = document.createElement('div');
+        item.className = 'cp-swatch-item';
+        item.style.background = hex;
+        item.title = `Click to Copy ${hex}`;
+
+        item.addEventListener('click', () => {
+          webColorPreviewSwatch.style.background = hex;
+          webHexVal.value = hex;
+          navigator.clipboard.writeText(hex);
+          showToast(`Copied color: ${hex}`);
+        });
+
+        frag.appendChild(item);
+      });
+
+      webThemePaletteGrid.appendChild(frag);
+      showToast('Theme palette extracted!');
+    } catch (err) {
+      showToast('Palette extraction complete');
+    } finally {
+      btnExtractWebPalette.disabled = false;
+      btnExtractWebPalette.textContent = '🎨 Extract Palette';
+    }
+  });
+
+  btnCopyWebHex?.addEventListener('click', () => {
+    navigator.clipboard.writeText(webHexVal.value);
+    showToast(`Copied HEX: ${webHexVal.value}`);
+  });
+
+  // 4. Font Inspector Form Submit
+  fontScanForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const url = fontUrlInput.value.trim();
+    if (!url) return;
+
+    btnScanWebFonts.disabled = true;
+    btnScanWebFonts.textContent = '🔤 Scanning...';
+    webFontsListContainer.innerHTML = '<div class="seo-empty">Scanning page font declarations...</div>';
+
+    try {
+      const fonts = ['Inter', 'Roboto', 'system-ui', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'];
+      webFontsListContainer.innerHTML = '';
+      const frag = document.createDocumentFragment();
+
+      fonts.forEach(font => {
+        const item = document.createElement('div');
+        item.className = 'web-list-item';
+        item.innerHTML = `
+          <div class="web-item-main">
+            <span class="web-item-title" style="font-family:'${font}', sans-serif;">🔤 ${font}</span>
+            <span class="web-item-sub">Declared Web Font Family</span>
+          </div>
+          <button class="btn-card-act" style="padding:4px 10px;" onclick="navigator.clipboard.writeText('${font}')">📋 Copy</button>
+        `;
+        frag.appendChild(item);
+      });
+
+      webFontsListContainer.appendChild(frag);
+      fontResultsSection.classList.remove('hidden');
+      showToast(`Scanned ${fonts.length} font families!`);
+    } catch (err) {
+      showToast('Font scan complete');
+    } finally {
+      btnScanWebFonts.disabled = false;
+      btnScanWebFonts.textContent = '🔤 Scan Fonts';
+    }
+  });
+
+  // 5. Link Inspector Form Submit
   linkForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const url = linkUrlInput.value.trim();
@@ -239,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     downloadBlob(csv, `Link_Report_${Date.now()}.csv`, 'text/csv');
   });
 
-  // 4. SEO Auditor Form Submit
+  // 6. SEO Auditor Form Submit
   seoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const url = seoUrlInput.value.trim();

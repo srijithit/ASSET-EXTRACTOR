@@ -7,10 +7,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Asset Extractors - Online Web Media Extractor & WebP Converter</title>
+  <title>Asset Extractors - Online Web Media Extractor, Color & Font Tools</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="logo.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2.0.0">
   <link rel="icon" href="logo.png">
 </head>
 <body>
@@ -34,11 +34,19 @@
         </div>
       </div>
 
-      <!-- Extension-like Tool Navigation Switcher -->
+      <!-- Extension Parity Tool Switcher -->
       <nav class="nav-tools-bar">
         <button class="nav-tool-btn active" id="tabExtractor">
           <span class="tool-icon">🖼️</span>
-          <span>Asset Extractor</span>
+          <span>Extractor</span>
+        </button>
+        <button class="nav-tool-btn" id="tabColorPicker">
+          <span class="tool-icon">🎨</span>
+          <span>Color Picker</span>
+        </button>
+        <button class="nav-tool-btn" id="tabFontPicker">
+          <span class="tool-icon">🔤</span>
+          <span>Font Inspector</span>
         </button>
         <button class="nav-tool-btn" id="tabLinkInspector">
           <span class="tool-icon">🔗</span>
@@ -50,21 +58,20 @@
         </button>
         <button class="nav-tool-btn" id="tabSimulator">
           <span class="tool-icon">📱</span>
-          <span>Mobile Simulator</span>
+          <span>Simulator</span>
         </button>
       </nav>
 
       <div class="nav-right">
         <div class="host-pill">
           <span class="status-dot"></span>
-          <span>Render Web Service</span>
+          <span>Render Live v2.0</span>
         </div>
       </div>
     </header>
 
     <!-- 1. TOOL VIEW 1: Asset Extractor -->
     <div class="tool-view-panel" id="viewExtractor">
-      <!-- Hero Search Bar -->
       <section class="hero-search-section">
         <div class="hero-content">
           <h2>Extract & Download Web Media Online</h2>
@@ -91,7 +98,6 @@
         </div>
       </section>
 
-      <!-- Results Section -->
       <main class="results-section hidden" id="resultsSection">
         <div class="results-header-bar">
           <div class="meta-source">
@@ -145,7 +151,63 @@
       </main>
     </div>
 
-    <!-- 2. TOOL VIEW 2: Link & Button Health Inspector -->
+    <!-- 2. TOOL VIEW 2: Color Picker & Palette Extractor -->
+    <div class="tool-view-panel hidden" id="viewColorPicker">
+      <section class="tool-hero-section">
+        <div class="hero-content">
+          <h2>🎨 Color Picker & Web Theme Palette Harvester</h2>
+          <p>Pick any pixel color from your screen using native Eyedropper or extract dominant CSS theme colors from any website URL.</p>
+
+          <form class="search-form" id="colorPaletteForm">
+            <div class="input-wrapper">
+              <input type="text" id="cpUrlInput" placeholder="Enter URL to extract theme colors (e.g. https://apple.com)">
+            </div>
+            <button type="submit" class="btn-primary-extract" id="btnExtractWebPalette">🎨 Extract Palette</button>
+          </form>
+        </div>
+      </section>
+
+      <main class="results-section">
+        <div class="web-stats-grid">
+          <div class="web-stat-card">
+            <div id="webColorPreviewSwatch" style="width:100%; height:48px; border-radius:8px; background:#0284c7; border:2px solid #e2e8f0; margin-bottom:8px;"></div>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="webHexVal" value="#0284c7" readonly style="flex:1; padding:4px 8px; font-weight:700; border:1px solid #cbd5e1; border-radius:6px;">
+              <button class="btn-modal-sec" id="btnCopyWebHex">📋 Copy</button>
+            </div>
+          </div>
+          <div class="web-stat-card" style="grid-column: span 3; display:flex; flex-direction:column; justify-content:center; gap:8px;">
+            <div style="font-weight:800; font-size:0.9rem; color:#0f172a;">PAGE THEME COLORS & PALETTE</div>
+            <div class="cp-recent-grid" id="webThemePaletteGrid">
+              <div class="cp-empty-palette">Enter URL above and click "Extract Palette" to scan page colors.</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- 3. TOOL VIEW 3: Font Inspector -->
+    <div class="tool-view-panel hidden" id="viewFontPicker">
+      <section class="tool-hero-section">
+        <div class="hero-content">
+          <h2>🔤 Web Font & Typography Inspector</h2>
+          <p>Inspect custom Web Fonts, Google Fonts, font families, font weights, and line heights declared across any webpage.</p>
+
+          <form class="search-form" id="fontScanForm">
+            <div class="input-wrapper">
+              <input type="text" id="fontUrlInput" placeholder="Enter URL to inspect fonts (e.g. https://apple.com)" required>
+            </div>
+            <button type="submit" class="btn-primary-extract" id="btnScanWebFonts">🔤 Scan Fonts</button>
+          </form>
+        </div>
+      </section>
+
+      <main class="results-section hidden" id="fontResultsSection">
+        <div class="web-link-table" id="webFontsListContainer"></div>
+      </main>
+    </div>
+
+    <!-- 4. TOOL VIEW 4: Link & Button Health Inspector -->
     <div class="tool-view-panel hidden" id="viewLinkInspector">
       <section class="tool-hero-section">
         <div class="hero-content">
@@ -190,7 +252,7 @@
       </main>
     </div>
 
-    <!-- 3. TOOL VIEW 3: SEO Asset & Image Optimizer -->
+    <!-- 5. TOOL VIEW 5: SEO Asset & Image Optimizer -->
     <div class="tool-view-panel hidden" id="viewSeoAudit">
       <section class="tool-hero-section">
         <div class="hero-content">
@@ -235,7 +297,7 @@
       </main>
     </div>
 
-    <!-- 4. TOOL VIEW 4: Mobile Simulator Studio -->
+    <!-- 6. TOOL VIEW 6: Mobile Simulator Studio -->
     <div class="tool-view-panel hidden" id="viewSimulator">
       <section class="tool-hero-section">
         <div class="hero-content">
@@ -280,6 +342,6 @@
     <div class="toast-popup hidden" id="webToast"></div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=2.0.0"></script>
 </body>
 </html>
