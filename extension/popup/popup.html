@@ -47,6 +47,14 @@
           </svg>
         </button>
 
+        <button class="btn-icon" id="btnSeoToggle" title="🎯 SEO Asset Audit & Optimization">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+        </button>
+
         <button class="btn-icon" id="btnOpenSimulator" title="Mobile Device Simulator Studio">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -198,6 +206,48 @@
       </div>
     </div>
 
+    <!-- SEO Optimization Drawer -->
+    <div class="seo-drawer hidden" id="seoDrawer">
+      <div class="seo-header">
+        <div class="seo-title-box">
+          <h4>🎯 SEO Image & Asset Optimizer</h4>
+          <span class="seo-subtitle">Audit ALT text, Next-Gen WebP formats, and image dimensions</span>
+        </div>
+        <button class="btn-seo-scan" id="btnRunSeoAudit">⚡ Run SEO Audit</button>
+      </div>
+
+      <!-- SEO Health Stats Grid -->
+      <div class="seo-stats-grid">
+        <div class="seo-stat-card score">
+          <span class="seo-stat-num" id="seoScoreNum">--/100</span>
+          <span class="seo-stat-lbl">SEO Score</span>
+        </div>
+        <div class="seo-stat-card ok">
+          <span class="seo-stat-num" id="seoCountAltOk">0</span>
+          <span class="seo-stat-lbl">🟢 With ALT</span>
+        </div>
+        <div class="seo-stat-card warning">
+          <span class="seo-stat-num" id="seoCountAltMissing">0</span>
+          <span class="seo-stat-lbl">⚠️ Missing ALT</span>
+        </div>
+        <div class="seo-stat-card info">
+          <span class="seo-stat-num" id="seoCountNextGen">0%</span>
+          <span class="seo-stat-lbl">WebP Next-Gen</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="seo-actions-bar">
+        <button class="btn-seo-action" id="btnAutoFixAlt">✨ Auto-Suggest ALT Tags</button>
+        <button class="btn-seo-action secondary" id="btnExportSeoReport">📥 Export SEO Report</button>
+      </div>
+
+      <!-- SEO Items List -->
+      <div class="seo-list-container" id="seoListContainer">
+        <div class="seo-empty">Click "⚡ Run SEO Audit" to scan page images for ALT text, dimensions, and speed optimization.</div>
+      </div>
+    </div>
+
     <!-- 1. Clean Empty Home Page Dashboard View (Default on launch) -->
     <div class="home-dashboard-view" id="homeDashboardView">
       <div class="home-empty-card">
@@ -205,7 +255,7 @@
           <img src="../icons/logo.png" class="home-sj-logo" alt="SJ Logo">
         </div>
         <h3 class="home-title">Asset Extractors</h3>
-        <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, or inspect unbroken link redirections.</p>
+        <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, or inspect unbroken link redirections & SEO image health.</p>
 
         <div class="home-action-grid">
           <button class="home-action-btn primary" id="btnHomeScanNow">
@@ -213,6 +263,14 @@
             <div class="home-btn-texts">
               <strong>Extract Images & Media</strong>
               <small>Click to scan and open gallery</small>
+            </div>
+          </button>
+
+          <button class="home-action-btn" id="btnHomeSeoAudit">
+            <span class="home-btn-icon">🎯</span>
+            <div class="home-btn-texts">
+              <strong>SEO Image Optimizer</strong>
+              <small>ALT text & PageSpeed score audit</small>
             </div>
           </button>
 
