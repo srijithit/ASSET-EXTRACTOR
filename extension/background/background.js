@@ -161,14 +161,39 @@ async function handleStitchFullPage(strips, width, height, pageTitle) {
   if (!strips || strips.length === 0) return;
 
   try {
-    const offscreen = new OffscreenCanvas(Math.max(1, Math.round(width)), Math.max(1, Math.round(height)));
+    // Safe maximum canvas dimensions for Chromium (16,000px limit)
+    const MAX_CANVAS_DIM = 16000;
+    let finalWidth = Math.max(1, Math.round(width));
+    let finalHeight = Math.max(1, Math.round(height));
+    let scale = 1;
+
+    if (finalHeight > MAX_CANVAS_DIM) {
+      scale = MAX_CANVAS_DIM / finalHeight;
+      finalHeight = MAX_CANVAS_DIM;
+      finalWidth = Math.round(finalWidth * scale);
+    }
+
+    const offscreen = new OffscreenCanvas(finalWidth, finalHeight);
     const ctx = offscreen.getContext('2d');
 
     for (const strip of strips) {
-      const resp = await fetch(strip.dataUrl);
-      const blob = await resp.blob();
-      const bitmap = await createImageBitmap(blob);
-      ctx.drawImage(bitmap, 0, Math.round(strip.y));
+      try {
+        const resp = await fetch(strip.dataUrl);
+        const blob = await resp.blob();
+        const bitmap = await createImageBitmap(blob);
+
+        if (scale !== 1) {
+          ctx.drawImage(
+            bitmap,
+            0, 0, bitmap.width, bitmap.height,
+            0, Math.round(strip.y * scale), finalWidth, Math.round(bitmap.height * scale)
+          );
+        } else {
+          ctx.drawImage(bitmap, 0, Math.round(strip.y));
+        }
+      } catch (stripErr) {
+        console.warn('Failed to draw image strip:', stripErr);
+      }
     }
 
     const fullBlob = await offscreen.convertToBlob({ type: 'image/png' });

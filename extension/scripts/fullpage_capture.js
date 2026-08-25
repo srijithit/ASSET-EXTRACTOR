@@ -1,12 +1,23 @@
 /**
- * Asset Extractors - Full Page Scrolling Screenshot Engine (Desktop & Responsive)
+ * Asset Extractors - Desktop Full Page Scrolling Screenshot Engine
  */
 
 (function () {
-  async function captureFullPage() {
-    // Save original styles
-    const originalScrollTop = window.scrollY || window.pageYOffset;
-    const originalScrollLeft = window.scrollX || window.pageXOffset;
+  async function captureFullPageDesktop() {
+    // 1. Store original scroll position
+    const originalScrollTop = window.scrollY || window.pageYOffset || 0;
+    const originalScrollLeft = window.scrollX || window.pageXOffset || 0;
+
+    // 2. Temporarily hide fixed/sticky elements after top slice to avoid duplicate floating bars
+    const fixedElements = [];
+    try {
+      document.querySelectorAll('*').forEach(el => {
+        const style = window.getComputedStyle(el);
+        if (style && (style.position === 'fixed' || style.position === 'sticky')) {
+          fixedElements.push({ el, originalPosition: el.style.position });
+        }
+      });
+    } catch (e) {}
 
     // Calculate full document desktop dimensions
     const totalHeight = Math.max(
@@ -18,36 +29,29 @@
       document.documentElement.clientHeight || 0
     );
 
-    const totalWidth = Math.max(
-      document.body.scrollWidth || 0,
-      document.documentElement.scrollWidth || 0,
-      document.body.offsetWidth || 0,
-      document.documentElement.offsetWidth || 0,
-      window.innerWidth || 0
-    );
-
     const viewportHeight = window.innerHeight;
     const viewportWidth = window.innerWidth;
     const dpr = window.devicePixelRatio || 1;
 
-    const strips = [];
     const numSteps = Math.ceil(totalHeight / viewportHeight);
+    const strips = [];
 
-    // Scroll to top first
+    // Scroll to top
     window.scrollTo(0, 0);
-    await new Promise(r => setTimeout(r, 150));
+    await new Promise(r => setTimeout(r, 200));
 
     for (let i = 0; i < numSteps; i++) {
       const targetY = i * viewportHeight;
       window.scrollTo(0, Math.min(targetY, totalHeight - viewportHeight));
 
-      // Wait for lazy images and scroll render
-      await new Promise(r => setTimeout(r, 220));
+      // Wait for layout/render and lazy loaded media
+      await new Promise(r => setTimeout(r, 260));
 
-      const actualScrollY = window.scrollY || window.pageYOffset;
+      const actualScrollY = window.scrollY || window.pageYOffset || 0;
+
       const dataUrl = await new Promise((resolve) => {
         chrome.runtime.sendMessage({ action: 'CAPTURE_VISIBLE_TAB_RAW' }, res => {
-          resolve(res?.dataUrl);
+          resolve(res?.dataUrl || null);
         });
       });
 
@@ -58,23 +62,39 @@
         });
       }
 
+      // Hide sticky elements after top slice to prevent floating headers on every frame
+      if (i === 0 && fixedElements.length > 0) {
+        fixedElements.forEach(item => {
+          try {
+            item.el.style.setProperty('position', 'absolute', 'important');
+          } catch (err) {}
+        });
+      }
+
       if (actualScrollY + viewportHeight >= totalHeight) {
         break;
       }
     }
 
+    // Restore fixed element original positions
+    fixedElements.forEach(item => {
+      try {
+        item.el.style.position = item.originalPosition || '';
+      } catch (err) {}
+    });
+
     // Restore original scroll position
     window.scrollTo(originalScrollLeft, originalScrollTop);
 
-    // Send strips to background to stitch canvas in full desktop resolution
+    // Send strips to background for error-free desktop canvas stitching
     chrome.runtime.sendMessage({
       action: 'STITCH_FULL_PAGE',
       strips: strips,
       totalWidth: Math.round(viewportWidth * dpr),
       totalHeight: Math.round(totalHeight * dpr),
-      pageTitle: document.title || 'Full_Page_Desktop_Screenshot'
+      pageTitle: document.title || 'Desktop_Full_Page'
     });
   }
 
-  captureFullPage();
+  captureFullPageDesktop();
 })();
