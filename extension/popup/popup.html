@@ -55,6 +55,20 @@
           </svg>
         </button>
 
+        <button class="btn-icon" id="btnColorPickerToggle" title="🎨 Color Picker & Eyedropper">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+          </svg>
+        </button>
+
+        <button class="btn-icon" id="btnFontPickerToggle" title="🔤 Font & Typography Inspector">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+            <line x1="9" y1="20" x2="15" y2="20"></line>
+            <line x1="12" y1="4" x2="12" y2="20"></line>
+          </svg>
+        </button>
+
         <button class="btn-icon" id="btnOpenSimulator" title="Mobile Device Simulator Studio">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -248,6 +262,92 @@
       </div>
     </div>
 
+    <!-- Color Picker & Eyedropper Drawer -->
+    <div class="color-picker-drawer hidden" id="colorPickerDrawer">
+      <div class="cp-header">
+        <div class="cp-title-box">
+          <h4>🎨 Color Picker & Eyedropper</h4>
+          <span class="cp-subtitle">Pick any pixel color directly from webpage</span>
+        </div>
+        <button class="btn-cp-pick" id="btnPickColorNow">⚡ Pick Color</button>
+      </div>
+
+      <!-- Active Selected Color Card -->
+      <div class="cp-active-card">
+        <div class="cp-color-preview" id="cpColorSwatch" style="background:#0284c7;"></div>
+        <div class="cp-color-inputs">
+          <div class="cp-input-row">
+            <span class="cp-label">HEX</span>
+            <input type="text" id="cpHexInput" value="#0284c7" readonly>
+            <button class="btn-cp-copy" data-copy="hex" title="Copy HEX">📋</button>
+          </div>
+          <div class="cp-input-row">
+            <span class="cp-label">RGB</span>
+            <input type="text" id="cpRgbInput" value="rgb(2, 132, 199)" readonly>
+            <button class="btn-cp-copy" data-copy="rgb" title="Copy RGB">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Picked Colors Palette -->
+      <div class="cp-section-title">
+        <span>RECENT PICKED COLORS</span>
+        <button class="btn-cp-clear" id="btnClearRecentColors">Clear</button>
+      </div>
+      <div class="cp-recent-grid" id="cpRecentGrid">
+        <div class="cp-empty-palette">No recent colors picked yet. Click "⚡ Pick Color" above.</div>
+      </div>
+
+      <!-- Page Dominant Palette -->
+      <div class="cp-section-title">
+        <span>PAGE THEME PALETTE</span>
+        <button class="btn-cp-clear" id="btnExtractPagePalette">Extract</button>
+      </div>
+      <div class="cp-recent-grid" id="cpPagePaletteGrid">
+        <div class="cp-empty-palette">Click "Extract" to scan theme colors from page elements.</div>
+      </div>
+    </div>
+
+    <!-- Font & Typography Inspector Drawer -->
+    <div class="font-picker-drawer hidden" id="fontPickerDrawer">
+      <div class="fp-header">
+        <div class="fp-title-box">
+          <h4>🔤 Font & Typography Inspector</h4>
+          <span class="fp-subtitle">Inspect font families, sizes, weights & styles</span>
+        </div>
+        <button class="btn-fp-toggle" id="btnToggleFontInspect">⚡ Inspect Fonts</button>
+      </div>
+
+      <!-- Selected Element Font Details -->
+      <div class="fp-details-card">
+        <div class="fp-family-name" id="fpFamilyName">Inter, sans-serif</div>
+        <div class="fp-meta-grid">
+          <div class="fp-meta-item">
+            <span class="lbl">Size</span>
+            <strong id="fpSizeVal">16px</strong>
+          </div>
+          <div class="fp-meta-item">
+            <span class="lbl">Weight</span>
+            <strong id="fpWeightVal">700 (Bold)</strong>
+          </div>
+          <div class="fp-meta-item">
+            <span class="lbl">Line Height</span>
+            <strong id="fpHeightVal">1.5</strong>
+          </div>
+          <div class="fp-meta-item">
+            <span class="lbl">Color</span>
+            <strong id="fpColorVal">#0f172a</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page Font Families -->
+      <div class="fp-section-title">PAGE DECLARED FONTS</div>
+      <div class="fp-fonts-list" id="fpFontsList">
+        <div class="fp-empty">Click "⚡ Inspect Fonts" to scan page fonts or hover over page text.</div>
+      </div>
+    </div>
+
     <!-- 1. Clean Empty Home Page Dashboard View (Default on launch) -->
     <div class="home-dashboard-view" id="homeDashboardView">
       <div class="home-empty-card">
@@ -255,7 +355,7 @@
           <img src="../icons/logo.png" class="home-sj-logo" alt="SJ Logo">
         </div>
         <h3 class="home-title">Asset Extractors</h3>
-        <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, or inspect unbroken link redirections & SEO image health.</p>
+        <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, pick webpage colors, inspect fonts, unbroken link redirections & SEO image health.</p>
 
         <div class="home-action-grid">
           <button class="home-action-btn primary" id="btnHomeScanNow">
@@ -263,6 +363,22 @@
             <div class="home-btn-texts">
               <strong>Extract Images & Media</strong>
               <small>Click to scan and open gallery</small>
+            </div>
+          </button>
+
+          <button class="home-action-btn" id="btnHomeColorPicker">
+            <span class="home-btn-icon">🎨</span>
+            <div class="home-btn-texts">
+              <strong>Color Picker & Eyedropper</strong>
+              <small>Pick webpage colors (HEX, RGB)</small>
+            </div>
+          </button>
+
+          <button class="home-action-btn" id="btnHomeFontPicker">
+            <span class="home-btn-icon">🔤</span>
+            <div class="home-btn-texts">
+              <strong>Font Inspector</strong>
+              <small>Inspect font families & sizes</small>
             </div>
           </button>
 

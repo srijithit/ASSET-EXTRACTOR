@@ -102,6 +102,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnExportSeoReport = document.getElementById('btnExportSeoReport');
   const seoListContainer = document.getElementById('seoListContainer');
 
+  // Color Picker & Eyedropper
+  const btnColorPickerToggle = document.getElementById('btnColorPickerToggle');
+  const colorPickerDrawer = document.getElementById('colorPickerDrawer');
+  const btnPickColorNow = document.getElementById('btnPickColorNow');
+  const cpColorSwatch = document.getElementById('cpColorSwatch');
+  const cpHexInput = document.getElementById('cpHexInput');
+  const cpRgbInput = document.getElementById('cpRgbInput');
+  const cpRecentGrid = document.getElementById('cpRecentGrid');
+  const btnClearRecentColors = document.getElementById('btnClearRecentColors');
+  const btnExtractPagePalette = document.getElementById('btnExtractPagePalette');
+  const cpPagePaletteGrid = document.getElementById('cpPagePaletteGrid');
+
+  // Font & Typography Inspector
+  const btnFontPickerToggle = document.getElementById('btnFontPickerToggle');
+  const fontPickerDrawer = document.getElementById('fontPickerDrawer');
+  const btnToggleFontInspect = document.getElementById('btnToggleFontInspect');
+  const fpFamilyName = document.getElementById('fpFamilyName');
+  const fpSizeVal = document.getElementById('fpSizeVal');
+  const fpWeightVal = document.getElementById('fpWeightVal');
+  const fpHeightVal = document.getElementById('fpHeightVal');
+  const fpColorVal = document.getElementById('fpColorVal');
+  const fpFontsList = document.getElementById('fpFontsList');
+
+  let recentColors = JSON.parse(localStorage.getItem('ae_recent_colors') || '[]');
+  let fontInspectActive = false;
+
   let allPageLinks = [];
   let currentLcFilter = 'all';
   let seoReportData = null;
@@ -133,8 +159,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     showHomeDashboard();
   }
 
-  function showHomeDashboard() {
-    homeDashboardView?.classList.remove('hidden');
+  function hideAllDrawers() {
+    homeDashboardView?.classList.add('hidden');
     imageExtractorPanel?.classList.add('hidden');
     linkCheckerDrawer?.classList.add('hidden');
     btnLinkCheckerToggle?.classList.remove('active');
@@ -142,18 +168,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnCaptureToggle?.classList.remove('active');
     seoDrawer?.classList.add('hidden');
     btnSeoToggle?.classList.remove('active');
+    colorPickerDrawer?.classList.add('hidden');
+    btnColorPickerToggle?.classList.remove('active');
+    fontPickerDrawer?.classList.add('hidden');
+    btnFontPickerToggle?.classList.remove('active');
     btnImageExtractorHome?.classList.remove('active');
   }
 
+  function showHomeDashboard() {
+    hideAllDrawers();
+    homeDashboardView?.classList.remove('hidden');
+  }
+
   async function showImageExtractor() {
-    homeDashboardView?.classList.add('hidden');
+    hideAllDrawers();
     imageExtractorPanel?.classList.remove('hidden');
-    linkCheckerDrawer?.classList.add('hidden');
-    btnLinkCheckerToggle?.classList.remove('active');
-    captureDrawer?.classList.add('hidden');
-    btnCaptureToggle?.classList.remove('active');
-    seoDrawer?.classList.add('hidden');
-    btnSeoToggle?.classList.remove('active');
     btnImageExtractorHome?.classList.add('active');
 
     if (allAssets.length === 0) {
@@ -162,13 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function showLinkChecker() {
-    homeDashboardView?.classList.add('hidden');
-    imageExtractorPanel?.classList.add('hidden');
-    btnImageExtractorHome?.classList.remove('active');
-    captureDrawer?.classList.add('hidden');
-    btnCaptureToggle?.classList.remove('active');
-    seoDrawer?.classList.add('hidden');
-    btnSeoToggle?.classList.remove('active');
+    hideAllDrawers();
     linkCheckerDrawer?.classList.remove('hidden');
     btnLinkCheckerToggle?.classList.add('active');
 
@@ -178,31 +201,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function showCaptureDrawer() {
-    homeDashboardView?.classList.add('hidden');
-    imageExtractorPanel?.classList.add('hidden');
-    btnImageExtractorHome?.classList.remove('active');
-    linkCheckerDrawer?.classList.add('hidden');
-    btnLinkCheckerToggle?.classList.remove('active');
-    seoDrawer?.classList.add('hidden');
-    btnSeoToggle?.classList.remove('active');
+    hideAllDrawers();
     captureDrawer?.classList.remove('hidden');
     btnCaptureToggle?.classList.add('active');
   }
 
   function showSeoDrawer() {
-    homeDashboardView?.classList.add('hidden');
-    imageExtractorPanel?.classList.add('hidden');
-    btnImageExtractorHome?.classList.remove('active');
-    linkCheckerDrawer?.classList.add('hidden');
-    btnLinkCheckerToggle?.classList.remove('active');
-    captureDrawer?.classList.add('hidden');
-    btnCaptureToggle?.classList.remove('active');
+    hideAllDrawers();
     seoDrawer?.classList.remove('hidden');
     btnSeoToggle?.classList.add('active');
 
     if (!seoReportData) {
       runSeoAudit();
     }
+  }
+
+  function showColorPickerDrawer() {
+    hideAllDrawers();
+    colorPickerDrawer?.classList.remove('hidden');
+    btnColorPickerToggle?.classList.add('active');
+    renderRecentColors();
+  }
+
+  function showFontPickerDrawer() {
+    hideAllDrawers();
+    fontPickerDrawer?.classList.remove('hidden');
+    btnFontPickerToggle?.classList.add('active');
+    scanPageFonts();
   }
 
   function setupEventListeners() {
@@ -215,6 +240,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Empty Home Dashboard Action Buttons
     document.getElementById('btnHomeScanNow')?.addEventListener('click', showImageExtractor);
+    document.getElementById('btnHomeColorPicker')?.addEventListener('click', showColorPickerDrawer);
+    document.getElementById('btnHomeFontPicker')?.addEventListener('click', showFontPickerDrawer);
     document.getElementById('btnHomeSeoAudit')?.addEventListener('click', showSeoDrawer);
 
     document.getElementById('btnHomeOpenSim')?.addEventListener('click', async () => {
@@ -369,6 +396,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnRunSeoAudit?.addEventListener('click', runSeoAudit);
     btnAutoFixAlt?.addEventListener('click', autoFixAltTags);
     btnExportSeoReport?.addEventListener('click', exportSeoReportCsv);
+
+    // Color Picker & Eyedropper Drawer Toggle
+    btnColorPickerToggle?.addEventListener('click', () => {
+      if (!colorPickerDrawer.classList.contains('hidden')) {
+        showHomeDashboard();
+      } else {
+        showColorPickerDrawer();
+      }
+    });
+
+    btnPickColorNow?.addEventListener('click', pickColorFromPage);
+    btnClearRecentColors?.addEventListener('click', clearRecentColors);
+    btnExtractPagePalette?.addEventListener('click', extractPageThemePalette);
+
+    document.querySelectorAll('[data-copy]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.copy;
+        const val = type === 'hex' ? cpHexInput.value : cpRgbInput.value;
+        copyToClipboard(val);
+        showToast(`Copied ${type.toUpperCase()} code: ${val}`);
+      });
+    });
+
+    // Font & Typography Inspector Drawer Toggle
+    btnFontPickerToggle?.addEventListener('click', () => {
+      if (!fontPickerDrawer.classList.contains('hidden')) {
+        showHomeDashboard();
+      } else {
+        showFontPickerDrawer();
+      }
+    });
+
+    btnToggleFontInspect?.addEventListener('click', toggleFontInspector);
 
     // Screen Capture Options Drawer Toggle
     btnCaptureToggle?.addEventListener('click', () => {
@@ -1469,5 +1529,185 @@ document.addEventListener('DOMContentLoaded', async () => {
     a.click();
     URL.revokeObjectURL(url);
     showToast('Exported SEO Image Audit (CSV)!');
+  }
+
+  // Color Picker Functions
+  async function pickColorFromPage() {
+    if (!currentTab?.id) return;
+
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ['scripts/color_picker.js']
+      });
+
+      chrome.tabs.sendMessage(currentTab.id, { action: 'ACTIVATE_EYEDROPPER' }, (res) => {
+        if (res && res.success) {
+          cpColorSwatch.style.background = res.hex;
+          cpHexInput.value = res.hex;
+          cpRgbInput.value = res.rgb;
+          saveRecentColor(res.hex);
+          copyToClipboard(res.hex);
+          showToast(`Picked & Copied HEX Color: ${res.hex}`);
+        }
+      });
+    } catch (e) {
+      console.warn('Eyedropper error:', e);
+      showToast('Click anywhere on webpage to pick a color.');
+    }
+  }
+
+  function saveRecentColor(hex) {
+    if (!recentColors.includes(hex)) {
+      recentColors.unshift(hex);
+      if (recentColors.length > 12) recentColors.pop();
+      localStorage.setItem('ae_recent_colors', JSON.stringify(recentColors));
+      renderRecentColors();
+    }
+  }
+
+  function renderRecentColors() {
+    if (!recentColors || recentColors.length === 0) {
+      cpRecentGrid.innerHTML = '<div class="cp-empty-palette">No recent colors picked yet. Click "⚡ Pick Color" above.</div>';
+      return;
+    }
+
+    cpRecentGrid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+
+    recentColors.forEach(hex => {
+      const item = document.createElement('div');
+      item.className = 'cp-swatch-item';
+      item.style.background = hex;
+      item.title = `Click to Copy ${hex}`;
+
+      item.addEventListener('click', () => {
+        cpColorSwatch.style.background = hex;
+        cpHexInput.value = hex;
+        copyToClipboard(hex);
+        showToast(`Copied color: ${hex}`);
+      });
+
+      frag.appendChild(item);
+    });
+
+    cpRecentGrid.appendChild(frag);
+  }
+
+  function clearRecentColors() {
+    recentColors = [];
+    localStorage.removeItem('ae_recent_colors');
+    renderRecentColors();
+    showToast('Recent colors cleared.');
+  }
+
+  async function extractPageThemePalette() {
+    if (!currentTab?.id) return;
+    cpPagePaletteGrid.innerHTML = '<div class="cp-empty-palette">Extracting theme colors...</div>';
+
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ['scripts/color_picker.js']
+      });
+
+      chrome.tabs.sendMessage(currentTab.id, { action: 'EXTRACT_PAGE_PALETTE' }, (res) => {
+        if (!res || !res.palette || res.palette.length === 0) {
+          cpPagePaletteGrid.innerHTML = '<div class="cp-empty-palette">No theme colors found.</div>';
+          return;
+        }
+
+        cpPagePaletteGrid.innerHTML = '';
+        const frag = document.createDocumentFragment();
+
+        res.palette.forEach(hex => {
+          const item = document.createElement('div');
+          item.className = 'cp-swatch-item';
+          item.style.background = hex;
+          item.title = `Click to Copy ${hex}`;
+
+          item.addEventListener('click', () => {
+            cpColorSwatch.style.background = hex;
+            cpHexInput.value = hex;
+            copyToClipboard(hex);
+            showToast(`Copied palette color: ${hex}`);
+          });
+
+          frag.appendChild(item);
+        });
+
+        cpPagePaletteGrid.appendChild(frag);
+        showToast(`Extracted ${res.palette.length} page theme colors!`);
+      });
+    } catch (e) {
+      cpPagePaletteGrid.innerHTML = '<div class="cp-empty-palette">Requires active webpage.</div>';
+    }
+  }
+
+  // Font Inspector Functions
+  async function toggleFontInspector() {
+    if (!currentTab?.id) return;
+    fontInspectActive = !fontInspectActive;
+
+    btnToggleFontInspect.textContent = fontInspectActive ? '⏹️ Stop Inspecting' : '⚡ Inspect Fonts';
+    btnToggleFontInspect.style.background = fontInspectActive ? '#ea2b2b' : '';
+
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ['scripts/font_picker.js']
+      });
+
+      chrome.tabs.sendMessage(currentTab.id, { action: 'TOGGLE_FONT_INSPECTOR', enabled: fontInspectActive }, (res) => {
+        if (fontInspectActive) {
+          showToast('Hover over any text on the webpage to inspect font!');
+          window.close(); // Close popup window so user can hover inspect directly on tab
+        }
+      });
+    } catch (e) {
+      showToast('Font inspector requires active website tab.');
+    }
+  }
+
+  async function scanPageFonts() {
+    if (!currentTab?.id) return;
+
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ['scripts/font_picker.js']
+      });
+
+      chrome.tabs.sendMessage(currentTab.id, { action: 'GET_PAGE_FONTS' }, (res) => {
+        if (!res || !res.fonts || res.fonts.length === 0) {
+          fpFontsList.innerHTML = '<div class="fp-empty">No custom declared fonts detected.</div>';
+          return;
+        }
+
+        fpFontsList.innerHTML = '';
+        const frag = document.createDocumentFragment();
+
+        res.fonts.forEach(font => {
+          const item = document.createElement('div');
+          item.className = 'fp-font-card';
+
+          item.innerHTML = `
+            <span class="fp-font-title" style="font-family:'${font}', sans-serif;">🔤 ${font}</span>
+            <button class="btn-cp-copy" title="Copy Font Name">📋 Copy</button>
+          `;
+
+          item.querySelector('button').addEventListener('click', () => {
+            copyToClipboard(font);
+            showToast(`Copied font family name: ${font}`);
+          });
+
+          frag.appendChild(item);
+        });
+
+        fpFontsList.appendChild(frag);
+      });
+    } catch (e) {
+      fpFontsList.innerHTML = '<div class="fp-empty">Requires active webpage tab.</div>';
+    }
   }
 });
