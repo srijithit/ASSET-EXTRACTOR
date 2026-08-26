@@ -335,6 +335,8 @@ body {
 /* Design Audit & Usability Suite Drawer (Matching User Screenshots) */
 .design-audit-drawer {
   flex: 1;
+  width: 100%;
+  align-self: stretch;
   background: #0f172a;
   color: #ffffff;
   padding: 14px 16px;
@@ -344,6 +346,11 @@ body {
   flex-direction: column;
   gap: 12px;
   animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body:has(#designAuditDrawer:not(.hidden)),
+.app-container:has(#designAuditDrawer:not(.hidden)) {
+  background: #0f172a !important;
 }
 
 .da-header-bar {
