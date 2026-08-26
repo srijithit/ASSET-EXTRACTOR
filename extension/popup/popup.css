@@ -332,6 +332,239 @@ body {
   animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Design Audit & Usability Suite Drawer (Matching User Screenshots) */
+.design-audit-drawer {
+  flex: 1;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 14px 16px;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.da-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.da-brand-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.da-brand-icon {
+  color: #f43f5e;
+  font-size: 1.1rem;
+}
+
+.da-brand-title h4 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+/* Top Tier Switcher */
+.da-mode-nav {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  background: #1e293b;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+
+.da-mode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 0.775rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.da-mode-btn.active {
+  background: #334155;
+  color: #ffffff;
+}
+
+/* Sub Category Switcher */
+.da-sub-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  background: #1e293b;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+
+.da-sub-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.da-sub-btn.active {
+  background: #334155;
+  color: #ffffff;
+}
+
+.da-explain-card {
+  font-size: 0.725rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  background: rgba(255,255,255,0.03);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.da-depth-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.da-label-mini {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.da-depth-nav {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  background: #1e293b;
+  padding: 3px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
+.da-depth-btn {
+  padding: 5px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #94a3b8;
+  font-size: 0.725rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.da-depth-btn.active {
+  background: #334155;
+  color: #ffffff;
+}
+
+.da-subtext {
+  font-size: 0.625rem;
+  color: #64748b;
+}
+
+.btn-da-scan-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
+  transition: all 0.15s ease;
+}
+
+.btn-da-scan-main:hover {
+  background: linear-gradient(135deg, #0f766e, #115e59);
+  transform: translateY(-1px);
+}
+
+.da-results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.da-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.da-issues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.da-issue-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.da-issue-title {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.da-issue-desc {
+  font-size: 0.65rem;
+  color: #94a3b8;
+}
+
+.da-issue-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  margin-top: 2px;
+}
+
+.badge-crit { background: #881337; color: #fecdd3; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+.badge-warn { background: #78350f; color: #fef3c7; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+.badge-info { background: #1e3a8a; color: #bfdbfe; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+
 .cp-header, .fp-header {
   display: flex;
   align-items: center;

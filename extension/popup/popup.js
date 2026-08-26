@@ -125,6 +125,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const fpColorVal = document.getElementById('fpColorVal');
   const fpFontsList = document.getElementById('fpFontsList');
 
+  // Design Audit, Usability & WCAG Suite (Matching User Screenshots)
+  const btnDesignAuditToggle = document.getElementById('btnDesignAuditToggle');
+  const designAuditDrawer = document.getElementById('designAuditDrawer');
+  const daHeaderTitle = document.getElementById('daHeaderTitle');
+  const daExplainCard = document.getElementById('daExplainCard');
+  const btnRunDesignAudit = document.getElementById('btnRunDesignAudit');
+  const daResultsContainer = document.getElementById('daResultsContainer');
+  const daAuditScore = document.getElementById('daAuditScore');
+  const daIssuesList = document.getElementById('daIssuesList');
+  const btnExportDesignAuditCsv = document.getElementById('btnExportDesignAuditCsv');
+
+  let currentDaCat = 'usability';
+  let currentDaDepth = 'deep';
+  let designAuditReportData = null;
+
   let recentColors = JSON.parse(localStorage.getItem('ae_recent_colors') || '[]');
   let fontInspectActive = false;
 
@@ -172,6 +187,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnColorPickerToggle?.classList.remove('active');
     fontPickerDrawer?.classList.add('hidden');
     btnFontPickerToggle?.classList.remove('active');
+    designAuditDrawer?.classList.add('hidden');
+    btnDesignAuditToggle?.classList.remove('active');
     btnImageExtractorHome?.classList.remove('active');
   }
 
@@ -230,6 +247,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     scanPageFonts();
   }
 
+  function showDesignAuditDrawer() {
+    hideAllDrawers();
+    designAuditDrawer?.classList.remove('hidden');
+    btnDesignAuditToggle?.classList.add('active');
+  }
+
   function setupEventListeners() {
     // Brand Logo/Title click returns to Empty Home Dashboard
     const brandGroup = document.querySelector('.brand-group');
@@ -240,6 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Empty Home Dashboard Action Buttons
     document.getElementById('btnHomeScanNow')?.addEventListener('click', showImageExtractor);
+    document.getElementById('btnHomeDesignAudit')?.addEventListener('click', showDesignAuditDrawer);
     document.getElementById('btnHomeColorPicker')?.addEventListener('click', showColorPickerDrawer);
     document.getElementById('btnHomeFontPicker')?.addEventListener('click', showFontPickerDrawer);
     document.getElementById('btnHomeSeoAudit')?.addEventListener('click', showSeoDrawer);
@@ -429,6 +453,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     btnToggleFontInspect?.addEventListener('click', toggleFontInspector);
+
+    // Design Audit, Usability & WCAG Drawer Toggle
+    btnDesignAuditToggle?.addEventListener('click', () => {
+      if (!designAuditDrawer.classList.contains('hidden')) {
+        showHomeDashboard();
+      } else {
+        showDesignAuditDrawer();
+      }
+    });
+
+    document.querySelectorAll('.da-sub-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.da-sub-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentDaCat = btn.dataset.dacat;
+        updateDaExplainCard(currentDaCat);
+      });
+    });
+
+    document.querySelectorAll('.da-depth-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.da-depth-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentDaDepth = btn.dataset.depth;
+      });
+    });
+
+    btnRunDesignAudit?.addEventListener('click', runDesignAudit);
+    btnExportDesignAuditCsv?.addEventListener('click', exportDesignAuditCsv);
 
     // Screen Capture Options Drawer Toggle
     btnCaptureToggle?.addEventListener('click', () => {
@@ -1740,5 +1793,114 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
       fpFontsList.innerHTML = '<div class="fp-empty">Requires active webpage tab.</div>';
     }
+  }
+
+  // Design Audit Functions (Matching User Screenshots)
+  function updateDaExplainCard(cat) {
+    if (cat === 'usability') {
+      daHeaderTitle.textContent = 'Usability';
+      daExplainCard.textContent = 'Scan for usability & consistency issues — type scale, font/colour/style consistency, layout and readability — highlighted right where they are. Complements the accessibility scan.';
+    } else if (cat === 'copy') {
+      daHeaderTitle.textContent = 'Copy';
+      daExplainCard.textContent = 'Scan visible copy for clarity & tone — vague CTAs, hard-to-read text, generic errors and inconsistent wording — highlighted right where they are.';
+    } else if (cat === 'accessibility') {
+      daHeaderTitle.textContent = 'Accessibility';
+      daExplainCard.textContent = 'Scan this page for WCAG 2.2 AA issues. Problems are highlighted right where they are on the page — no Figma needed.';
+    }
+  }
+
+  async function runDesignAudit() {
+    if (!currentTab?.id) return;
+    btnRunDesignAudit.disabled = true;
+    btnRunDesignAudit.querySelector('span').textContent = 'Scanning page...';
+    daIssuesList.innerHTML = '<div class="fp-empty" style="color:#94a3b8; background:#1e293b; border-color:#334155;">Scanning DOM elements & auditing design rules...</div>';
+    daResultsContainer.classList.remove('hidden');
+
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: currentTab.id },
+        files: ['scripts/design_audit.js']
+      });
+
+      chrome.tabs.sendMessage(currentTab.id, {
+        action: 'RUN_DESIGN_AUDIT',
+        category: currentDaCat,
+        depth: currentDaDepth
+      }, (res) => {
+        if (res && res.success && res.results) {
+          designAuditReportData = res.results;
+          daAuditScore.textContent = `Score: ${res.results.score}/100 • Discovered ${res.results.totalCount} issues`;
+          renderDesignAuditIssues(res.results.issues);
+          showToast(`Design Audit complete! Found ${res.results.totalCount} issues.`);
+        } else {
+          daIssuesList.innerHTML = '<div class="fp-empty">No issues discovered on page!</div>';
+        }
+      });
+    } catch (e) {
+      console.warn('Design audit error:', e);
+      showToast('Requires active webpage tab.');
+    } finally {
+      btnRunDesignAudit.disabled = false;
+      btnRunDesignAudit.querySelector('span').textContent = 'Scan page';
+    }
+  }
+
+  function renderDesignAuditIssues(issues) {
+    if (!issues || issues.length === 0) {
+      daIssuesList.innerHTML = '<div class="fp-empty" style="color:#22c55e; background:#1e293b; border-color:#334155;">🟢 0 issues found! Page passes design & WCAG audit.</div>';
+      return;
+    }
+
+    daIssuesList.innerHTML = '';
+    const frag = document.createDocumentFragment();
+
+    issues.forEach(issue => {
+      const card = document.createElement('div');
+      card.className = 'da-issue-card';
+
+      const badge = issue.severity === 'critical' ? '<span class="badge-crit">CRITICAL</span>' : (issue.severity === 'warning' ? '<span class="badge-warn">WARNING</span>' : '<span class="badge-info">INFO</span>');
+
+      card.innerHTML = `
+        <div class="da-issue-title">${issue.type}: ${issue.title}</div>
+        <div class="da-issue-desc">${issue.description}</div>
+        <div class="da-issue-meta">
+          ${badge}
+          <button class="btn-cp-copy" style="font-size:0.6rem; padding:1px 6px;" title="Highlight on Page">🎯 Highlight</button>
+        </div>
+      `;
+
+      card.querySelector('button').addEventListener('click', () => {
+        chrome.tabs.sendMessage(currentTab.id, {
+          action: 'HIGHLIGHT_AUDIT_ELEMENT',
+          elementSelector: issue.element
+        });
+        showToast(`Highlighting element ${issue.element} on page!`);
+      });
+
+      frag.appendChild(card);
+    });
+
+    daIssuesList.appendChild(frag);
+  }
+
+  function exportDesignAuditCsv() {
+    if (!designAuditReportData || !designAuditReportData.issues) {
+      showToast('Run design audit scan first!');
+      return;
+    }
+
+    let csv = 'Category,Issue Type,Severity,Title,Description,Element Selector\n';
+    designAuditReportData.issues.forEach(i => {
+      csv += `"${i.category}","${i.type}","${i.severity}","${i.title.replace(/"/g, '""')}","${i.description.replace(/"/g, '""')}","${i.element}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Design_Audit_Report_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Exported Design Audit CSV Report!');
   }
 });

@@ -69,6 +69,12 @@
           </svg>
         </button>
 
+        <button class="btn-icon" id="btnDesignAuditToggle" title="✨ Design, Usability & Accessibility Audit">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+          </svg>
+        </button>
+
         <button class="btn-icon" id="btnOpenSimulator" title="Mobile Device Simulator Studio">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -348,6 +354,71 @@
       </div>
     </div>
 
+    <!-- Design Audit, UX Copy & WCAG Accessibility Drawer (Matching User Screenshots) -->
+    <div class="design-audit-drawer hidden" id="designAuditDrawer">
+      <div class="da-header-bar">
+        <div class="da-brand-title">
+          <span class="da-brand-icon">⚡</span>
+          <h4 id="daHeaderTitle">Usability</h4>
+        </div>
+      </div>
+
+      <!-- Top Tier Switcher: Design Audit vs Design Diff -->
+      <div class="da-mode-nav">
+        <button class="da-mode-btn active" id="daTabModeAudit">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          <span>Design Audit</span>
+        </button>
+        <button class="da-mode-btn" id="daTabModeDiff">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          <span>Design Diff</span>
+        </button>
+      </div>
+
+      <!-- Sub-Category Switcher: Usability vs Copy vs Accessibility (Matching Screenshots) -->
+      <div class="da-sub-nav">
+        <button class="da-sub-btn active" data-dacat="usability">
+          <span>✨</span> Usability
+        </button>
+        <button class="da-sub-btn" data-dacat="copy">
+          <span>ab</span> Copy
+        </button>
+        <button class="da-sub-btn" data-dacat="accessibility">
+          <span>♿</span> Accessibility
+        </button>
+      </div>
+
+      <!-- Category Dynamic Explanation Card -->
+      <div class="da-explain-card" id="daExplainCard">
+        Scan for usability & consistency issues — type scale, font/colour/style consistency, layout and readability — highlighted right where they are. Complements the accessibility scan.
+      </div>
+
+      <!-- Analysis Depth Switcher -->
+      <div class="da-depth-block">
+        <span class="da-label-mini">ANALYSIS DEPTH</span>
+        <div class="da-depth-nav">
+          <button class="da-depth-btn" data-depth="quick">Quick</button>
+          <button class="da-depth-btn active" data-depth="deep">Deep</button>
+        </div>
+        <span class="da-subtext" id="daDepthSubtext">Comprehensive analysis · Full page element scan</span>
+      </div>
+
+      <!-- Main Action Scan Button (Matching User Screenshots) -->
+      <button class="btn-da-scan-main" id="btnRunDesignAudit">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12h6M12 9v6"/></svg>
+        <span>Scan page</span>
+      </button>
+
+      <!-- Audit Results List -->
+      <div class="da-results-container hidden" id="daResultsContainer">
+        <div class="da-results-header">
+          <span id="daAuditScore">Score: --</span>
+          <button class="btn-cp-clear" id="btnExportDesignAuditCsv">📥 Export Report (CSV)</button>
+        </div>
+        <div class="da-issues-list" id="daIssuesList"></div>
+      </div>
+    </div>
+
     <!-- 1. Clean Empty Home Page Dashboard View (Default on launch) -->
     <div class="home-dashboard-view" id="homeDashboardView">
       <div class="home-empty-card">
@@ -355,7 +426,7 @@
           <img src="../icons/logo.png" class="home-sj-logo" alt="SJ Logo">
         </div>
         <h3 class="home-title">Asset Extractors</h3>
-        <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, pick webpage colors, inspect fonts, unbroken link redirections & SEO image health.</p>
+        <p class="home-subtitle">Extract high-res images, videos, SVGs, brand logos, pick webpage colors, inspect fonts, usability & WCAG audit, link health.</p>
 
         <div class="home-action-grid">
           <button class="home-action-btn primary" id="btnHomeScanNow">
@@ -363,6 +434,14 @@
             <div class="home-btn-texts">
               <strong>Extract Images & Media</strong>
               <small>Click to scan and open gallery</small>
+            </div>
+          </button>
+
+          <button class="home-action-btn" id="btnHomeDesignAudit">
+            <span class="home-btn-icon">✨</span>
+            <div class="home-btn-texts">
+              <strong>Design & Usability Audit</strong>
+              <small>Usability, Copy & WCAG 2.2 AA</small>
             </div>
           </button>
 
