@@ -332,13 +332,13 @@ body {
   animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Design Audit & Usability Suite Drawer (Matching User Screenshots) */
+/* Design Audit & Usability Suite Drawer (Clean Light Blue & White Theme) */
 .design-audit-drawer {
   flex: 1;
   width: 100%;
   align-self: stretch;
-  background: #0f172a;
-  color: #ffffff;
+  background: #f8fafc;
+  color: #0f172a;
   padding: 14px 16px;
   overflow-y: auto;
   min-height: 0;
@@ -346,11 +346,6 @@ body {
   flex-direction: column;
   gap: 12px;
   animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body:has(#designAuditDrawer:not(.hidden)),
-.app-container:has(#designAuditDrawer:not(.hidden)) {
-  background: #0f172a !important;
 }
 
 .da-header-bar {
@@ -363,25 +358,21 @@ body:has(#designAuditDrawer:not(.hidden)),
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 8px;
-  background: #1e293b;
-  color: #38bdf8;
-  border: 1px solid #334155;
+  padding: 4px 10px;
+  background: #ffffff;
+  color: #0284c7;
+  border: 1px solid var(--border-light);
   border-radius: 6px;
-  font-size: 0.65rem;
+  font-size: 0.675rem;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   transition: all 0.15s ease;
 }
 
 .btn-da-fullscreen:hover {
-  background: #334155;
-  color: #ffffff;
-}
-
-/* Fix right side white margin on dark drawer */
-.popup-container:has(#designAuditDrawer:not(.hidden)) {
-  background: #0f172a !important;
+  background: #f1f5f9;
+  color: #0369a1;
 }
 
 .da-brand-title {
@@ -391,46 +382,14 @@ body:has(#designAuditDrawer:not(.hidden)),
 }
 
 .da-brand-icon {
-  color: #f43f5e;
+  color: #0284c7;
   font-size: 1.1rem;
 }
 
 .da-brand-title h4 {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #ffffff;
-}
-
-/* Top Tier Switcher */
-.da-mode-nav {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-  background: #1e293b;
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid #334155;
-}
-
-.da-mode-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  color: #94a3b8;
-  font-size: 0.775rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.da-mode-btn.active {
-  background: #334155;
-  color: #ffffff;
+  color: #0f172a;
 }
 
 /* Sub Category Switcher */
@@ -438,10 +397,10 @@ body:has(#designAuditDrawer:not(.hidden)),
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
-  background: #1e293b;
-  padding: 4px;
+  background: #e2e8f0;
+  padding: 3px;
   border-radius: 8px;
-  border: 1px solid #334155;
+  border: 1px solid #cbd5e1;
 }
 
 .da-sub-btn {
@@ -453,7 +412,7 @@ body:has(#designAuditDrawer:not(.hidden)),
   background: transparent;
   border: none;
   border-radius: 6px;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
@@ -461,18 +420,20 @@ body:has(#designAuditDrawer:not(.hidden)),
 }
 
 .da-sub-btn.active {
-  background: #334155;
-  color: #ffffff;
+  background: #ffffff;
+  color: #0284c7;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .da-explain-card {
   font-size: 0.725rem;
-  color: #cbd5e1;
+  color: #475569;
   line-height: 1.45;
-  background: rgba(255,255,255,0.03);
+  background: #ffffff;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 
 .da-depth-block {
@@ -492,10 +453,10 @@ body:has(#designAuditDrawer:not(.hidden)),
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 4px;
-  background: #1e293b;
+  background: #e2e8f0;
   padding: 3px;
   border-radius: 6px;
-  border: 1px solid #334155;
+  border: 1px solid #cbd5e1;
 }
 
 .da-depth-btn {
@@ -503,15 +464,16 @@ body:has(#designAuditDrawer:not(.hidden)),
   background: transparent;
   border: none;
   border-radius: 4px;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.725rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .da-depth-btn.active {
-  background: #334155;
-  color: #ffffff;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
 }
 
 .da-subtext {
@@ -525,19 +487,19 @@ body:has(#designAuditDrawer:not(.hidden)),
   justify-content: center;
   gap: 8px;
   padding: 10px 16px;
-  background: linear-gradient(135deg, #0d9488, #0f766e);
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
   color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);
   transition: all 0.15s ease;
 }
 
 .btn-da-scan-main:hover {
-  background: linear-gradient(135deg, #0f766e, #115e59);
+  background: linear-gradient(135deg, #0284c7, #0369a1);
   transform: translateY(-1px);
 }
 
@@ -553,7 +515,7 @@ body:has(#designAuditDrawer:not(.hidden)),
   justify-content: space-between;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #38bdf8;
+  color: #0284c7;
 }
 
 .da-issues-list {
@@ -565,8 +527,8 @@ body:has(#designAuditDrawer:not(.hidden)),
 }
 
 .da-issue-card {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
   border-radius: 6px;
   padding: 8px 10px;
   display: flex;
@@ -577,12 +539,12 @@ body:has(#designAuditDrawer:not(.hidden)),
 .da-issue-title {
   font-size: 0.725rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: #0f172a;
 }
 
 .da-issue-desc {
   font-size: 0.65rem;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .da-issue-meta {
