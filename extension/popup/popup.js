@@ -483,6 +483,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnRunDesignAudit?.addEventListener('click', runDesignAudit);
     btnExportDesignAuditCsv?.addEventListener('click', exportDesignAuditCsv);
 
+    document.getElementById('btnDaFullScreen')?.addEventListener('click', async () => {
+      if (!currentTab?.id) {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        currentTab = tab;
+      }
+      const url = currentTab?.url || 'https://wikipedia.org';
+      const viewerUrl = chrome.runtime.getURL(`viewer/viewer.html?tab=design-audit&url=${encodeURIComponent(url)}`);
+      chrome.tabs.create({ url: viewerUrl });
+    });
+
     // Screen Capture Options Drawer Toggle
     btnCaptureToggle?.addEventListener('click', () => {
       if (!captureDrawer.classList.contains('hidden')) {

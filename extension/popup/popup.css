@@ -352,6 +352,31 @@ body {
   justify-content: space-between;
 }
 
+.btn-da-fullscreen {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-da-fullscreen:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+/* Fix right side white margin on dark drawer */
+.popup-container:has(#designAuditDrawer:not(.hidden)) {
+  background: #0f172a !important;
+}
+
 .da-brand-title {
   display: flex;
   align-items: center;
