@@ -69,13 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     defaultFormat: 'rar'
   };
 
-  // Screen Capture Options
-  const btnCaptureToggle = document.getElementById('btnCaptureToggle');
-  const captureDrawer = document.getElementById('captureDrawer');
-  const btnCapArea = document.getElementById('btnCapArea');
-  const btnCapFull = document.getElementById('btnCapFull');
-  const btnCapVisible = document.getElementById('btnCapVisible');
-  const btnCapScreen = document.getElementById('btnCapScreen');
+
 
   // Link & Button Health Checker
   const btnLinkCheckerToggle = document.getElementById('btnLinkCheckerToggle');
@@ -179,8 +173,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     imageExtractorPanel?.classList.add('hidden');
     linkCheckerDrawer?.classList.add('hidden');
     btnLinkCheckerToggle?.classList.remove('active');
-    captureDrawer?.classList.add('hidden');
-    btnCaptureToggle?.classList.remove('active');
     seoDrawer?.classList.add('hidden');
     btnSeoToggle?.classList.remove('active');
     colorPickerDrawer?.classList.add('hidden');
@@ -217,11 +209,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  function showCaptureDrawer() {
-    hideAllDrawers();
-    captureDrawer?.classList.remove('hidden');
-    btnCaptureToggle?.classList.add('active');
-  }
 
   function showSeoDrawer() {
     hideAllDrawers();
@@ -279,7 +266,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.getElementById('btnHomeCheckLinks')?.addEventListener('click', showLinkChecker);
-    document.getElementById('btnHomeCapture')?.addEventListener('click', showCaptureDrawer);
 
     // Category pills
     categoryPills.forEach(pill => {
@@ -493,79 +479,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       chrome.tabs.create({ url: viewerUrl });
     });
 
-    // Screen Capture Options Drawer Toggle
-    btnCaptureToggle?.addEventListener('click', () => {
-      if (!captureDrawer.classList.contains('hidden')) {
-        showHomeDashboard();
-      } else {
-        showCaptureDrawer();
-      }
-    });
 
-    // 1. Selected Area (Ctrl+Shift+S)
-    btnCapArea.addEventListener('click', () => {
-      if (currentTab?.id) {
-        chrome.runtime.sendMessage({
-          action: 'TRIGGER_SELECTED_AREA',
-          tabId: currentTab.id
-        });
-        window.close(); // Close popup so user can drag & select area
-      }
-    });
-
-    // 2. Full Page (Ctrl+Shift+E)
-    btnCapFull.addEventListener('click', () => {
-      if (currentTab?.id) {
-        chrome.runtime.sendMessage({
-          action: 'TRIGGER_FULL_PAGE',
-          tabId: currentTab.id
-        });
-        showToast('Capturing full page screenshot...');
-        setTimeout(() => window.close(), 500);
-      }
-    });
-
-    // 3. Visible Part (Ctrl+Shift+1)
-    btnCapVisible.addEventListener('click', () => {
-      if (currentTab?.id) {
-        chrome.runtime.sendMessage({
-          action: 'TRIGGER_VISIBLE_PART',
-          tabId: currentTab.id
-        });
-        showToast('Visible part screenshot saved!');
-      }
-    });
-
-    // 4. Whole Screen & Window
-    btnCapScreen.addEventListener('click', async () => {
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({ video: { mediaSource: 'screen' } });
-        const track = stream.getVideoTracks()[0];
-        const imageCapture = new ImageCapture(track);
-        const bitmap = await imageCapture.grabFrame();
-        track.stop();
-
-        const canvas = document.createElement('canvas');
-        canvas.width = bitmap.width;
-        canvas.height = bitmap.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(bitmap, 0, 0);
-
-        const dataUrl = canvas.toDataURL('image/png');
-        const filename = `AssetExtractors_Screen_${Date.now().toString(36)}.png`;
-
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        showToast('Full screen captured!');
-      } catch (err) {
-        console.warn('Screen capture cancelled or blocked:', err);
-      }
-    });
 
     // Load Saved Settings with Desired Defaults
     chrome.storage.local.get(
